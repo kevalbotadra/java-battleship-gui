@@ -20,11 +20,9 @@ public class PlayerBoard extends JPanel implements ActionListener {
     private static GameTile[][] gameTiles;
  
 
-
     public PlayerBoard() {
         setLayout(new GridLayout(num, num));
         setBounds(375, 50, 650, 650);
-
 
         // define an array of GameTiles equal to 100 (the amount of game tiles that should exist)
         ArrayList<GameTile> listGameTiles = new ArrayList<GameTile>();

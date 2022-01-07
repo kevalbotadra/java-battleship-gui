@@ -17,6 +17,8 @@ public class OtherBoard extends JPanel implements ActionListener {
 
     private boolean[][] shipPlacements;
 
+    private boolean[][] hitOrMiss;
+    
     private Ship carrier;
     private Ship battleship;
     private Ship submarine;
@@ -25,10 +27,13 @@ public class OtherBoard extends JPanel implements ActionListener {
 
     private Ship[] ships;
 
+
     public OtherBoard() {
         super(new GridLayout(num, num)); // created a grid layout 11 x 11
 
         this.setBounds(25, 20, 325, 325);
+
+        hitOrMiss = new boolean[10][10];
 
         // define an array of GameTiles equal to 100 (the amount of game tiles that
         // should exist)
@@ -75,6 +80,8 @@ public class OtherBoard extends JPanel implements ActionListener {
             for (int k = 0; k < 10; k++) {
                 // get the tile at the counter value
                 GameTile tile = listGameTiles.get(tileCounter);
+                tile.row = i;
+                tile.column = k;
 
                 // assign the row value and the column value to the obtained tile
                 arrayGameTiles[i][k] = tile;
@@ -111,9 +118,9 @@ public class OtherBoard extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("button")){
-            this.resetBoard();
+            GameTile tappedTile = (GameTile)e.getSource();
+            this.checkHitOrMiss(tappedTile.row, tappedTile.column);
         }
-
     }
 
     public void setShips() {
@@ -183,16 +190,6 @@ public class OtherBoard extends JPanel implements ActionListener {
                     break;
                 }
             }
-
-            // loops over every row
-            for (int i = 0; i < 10; i++) {
-                // loop over every column
-                for (int k = 0; k < 10; k++) {
-                    if (shipPlacements[i][k]) {
-                        gameTiles[i][k].setBackground(Color.RED);
-                    }
-                }
-            }
         }
     }
 
@@ -212,8 +209,17 @@ public class OtherBoard extends JPanel implements ActionListener {
         this.setShips();
     }
     
-    public void checkHitOrMiss(int xCord, int yCord) {
+    public void setColorTile(int xCord, int yCord, Color color){
+        gameTiles[xCord][yCord].setBackground(color);
+    }
 
+    public void checkHitOrMiss(int xCord, int yCord) {
+        if(shipPlacements[xCord][yCord]){ // indicates if the xCord and yCord is a hit
+            hitOrMiss[xCord][yCord] = true;
+            this.setColorTile(xCord, yCord, Color.RED);
+        } else {
+            this.setColorTile(xCord, yCord, Color.GREEN);
+        }
     }
 
 }
