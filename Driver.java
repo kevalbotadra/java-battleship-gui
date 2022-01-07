@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 
 public class Driver {
     public static void main(String[] args) {
-        Game battleship = new Game();
+        Game gameBattleship = new Game();
       }
+
 }
