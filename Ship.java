@@ -3,8 +3,6 @@ package battleship;
 public class Ship{
     String name;
     int length;
-    int col;
-    int row;
     int direction;
 
     public static final int unset = -1;
@@ -14,23 +12,8 @@ public class Ship{
     public Ship(String name, int length){
         this.name = name;
         this.length = length;
-        this.row = -1;
-        this.col = -1;
+
         this.direction = unset;
-    }
-
-    public boolean isLocationSet(){
-        if(row == -1 && col == -1){
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
-
-    public void setLocation(int row, int col){
-        this.row = row;
-        this.col = col;
     }
 
     public boolean isDirectionSet(){
@@ -46,14 +29,6 @@ public class Ship{
         if(direction != unset && direction != horizontal && direction != vertical){
             this.direction = direction;
         }
-    }
-
-    public int getcol(){
-        return col;
-    }
-
-    public int getrow(){
-        return row;
     }
 
     public int getDirection(){
