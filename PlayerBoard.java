@@ -26,7 +26,7 @@ public class PlayerBoard extends JPanel {
 
     public PlayerBoard(ActionListener listener) {
         setLayout(new GridLayout(num, num));
-        setBounds(375, 50, 650, 650);
+        setBounds(375, 75, 650, 650);
 
 
         shipPlacements = new boolean[10][10];

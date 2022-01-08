@@ -3,6 +3,7 @@ package battleship;
 import javax.print.attribute.standard.MediaSize.Other;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.MouseInputListener;
 import javax.swing.plaf.DimensionUIResource;
@@ -17,6 +18,7 @@ public class Game implements ActionListener {
     private JFrame frame;
     private PlayerBoard playerBoard;
     private OtherBoard otherBoard;
+    private SideButtons sideButtons;
 
     private Phase phase;
 
@@ -48,6 +50,10 @@ public class Game implements ActionListener {
         // otherBoard.disableButtons();
         frame.add(otherBoard);
 
+        sideButtons = new SideButtons(this);
+        frame.add(sideButtons);
+        
+
         
 
         setShipsPlacedLabel();     
@@ -61,12 +67,12 @@ public class Game implements ActionListener {
     public void setShipsPlacedLabel(){
         JLabel shipsPlacedLabel = new JLabel();
         if (!shipsPlaced){
-            shipsPlacedLabel.setText("Tap to place ships on the board.");
+            shipsPlacedLabel.setText("<html>Tap anywhere on the grid to place your ships on the board.<br>Tap the space bar to rotate the ship.<br>Tap enter to confirm its location.</html>");
         } else {
             shipsPlacedLabel.setText("This is your board to keep track of your ships.");
         }
         
-        shipsPlacedLabel.setBounds(375, 10, 100, 100);
+        shipsPlacedLabel.setBounds(500, 0, 400, 100);
         frame.add(shipsPlacedLabel);
     }
 
@@ -82,6 +88,11 @@ public class Game implements ActionListener {
 
     
     public void actionPerformed(ActionEvent e){
+        if (e.getActionCommand() == "restart"){
+            otherBoard.clearBoard();
+            otherBoard.setShips();
+        }
+
         if (e.getActionCommand() == "playerBoardTile"){
             GameTile tappedTile = (GameTile)e.getSource();
             turn = 1;
@@ -94,6 +105,8 @@ public class Game implements ActionListener {
             turn = 0;
             // setButtons(turn);
         }
+
+        
     }
 
 }
