@@ -10,7 +10,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class OtherBoard extends JPanel implements ActionListener {
+public class OtherBoard extends JPanel {
     private static int num = 11;
 
     private GameTile[][] gameTiles;
@@ -28,7 +28,7 @@ public class OtherBoard extends JPanel implements ActionListener {
     private Ship[] ships;
 
 
-    public OtherBoard() {
+    public OtherBoard(ActionListener listener) {
         super(new GridLayout(num, num)); // created a grid layout 11 x 11
 
         this.setBounds(25, 20, 325, 325);
@@ -61,8 +61,8 @@ public class OtherBoard extends JPanel implements ActionListener {
             } else {
                 // create a new tile, add it to the gameTiles list, and place it at the i value
                 // in the gridlayout
-                GameTile gameTile = new GameTile(true);
-                gameTile.addActionListener(this);
+                GameTile gameTile = new GameTile("otherBoardTile",true);
+                gameTile.addActionListener(listener);
                 listGameTiles.add(gameTile);
                 this.add(gameTile);
             }
@@ -116,13 +116,6 @@ public class OtherBoard extends JPanel implements ActionListener {
 
     }
 
-    public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("button")){
-            GameTile tappedTile = (GameTile)e.getSource();
-            this.checkHitOrMiss(tappedTile.row, tappedTile.column);
-        }
-    }
-
     public void setShips() {
         // instantate a random class
         Random rand = new Random();
@@ -135,12 +128,19 @@ public class OtherBoard extends JPanel implements ActionListener {
                 int y = rand.nextInt(10);
 
                 // generate a random direction (horizontal : 0 or vertical : 1)
-                int direction = rand.nextInt(2);
+                int directionIdx = rand.nextInt(2);
+
+                Direction direction;
+                if(directionIdx == 0){
+                    direction = Direction.HORIZONTAL;
+                } else {
+                    direction = Direction.VERTICAL;
+                }
 
                 // overlap boolean indicates if overlap exists
                 boolean overlap = false;
 
-                if (direction == 0) {
+                if (direction == Direction.HORIZONTAL) {
                     if (y > 5) {
                         y = y - ship.length;
                     }
@@ -152,7 +152,7 @@ public class OtherBoard extends JPanel implements ActionListener {
                     }
                 }
 
-                if (direction == 1) {
+                if (direction == Direction.VERTICAL) {
                     if (x > 5) {
                         x = x - ship.length;
                     }
@@ -165,7 +165,7 @@ public class OtherBoard extends JPanel implements ActionListener {
                 }
 
                 if (!overlap) {
-                    if (direction == 0) {
+                    if (direction == Direction.HORIZONTAL) {
                         ship.direction = direction;
                         if (y > 5) {
                             y = y - ship.length;
@@ -176,7 +176,7 @@ public class OtherBoard extends JPanel implements ActionListener {
                         }
                     }
 
-                    if (direction == 1) {
+                    if (direction == Direction.VERTICAL) {
                         ship.direction = direction;
                         if (x > 5) {
                             x = x - ship.length;
@@ -219,6 +219,22 @@ public class OtherBoard extends JPanel implements ActionListener {
             this.setColorTile(xCord, yCord, Color.RED);
         } else {
             this.setColorTile(xCord, yCord, Color.GREEN);
+        }
+    }
+
+    public void disableButtons(){
+        for (int i = 0; i < 10; i++){
+            for (int k = 0; k < 10; k++){
+                gameTiles[i][k].setEnabled(false);
+            }
+        }
+    }
+
+    public void enableButtons(){
+        for (int i = 0; i < 10; i++){
+            for (int k = 0; k < 10; k++){
+                gameTiles[i][k].setEnabled(true);
+            }
         }
     }
 

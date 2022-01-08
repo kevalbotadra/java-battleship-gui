@@ -11,13 +11,13 @@ class GameTile extends JButton {
     public int row;
     public int column;
 
-    public GameTile(boolean useBorder) {
+    public GameTile(String actionCommand, boolean useBorder) {
         if (useBorder){
             setBorder(BorderFactory.createLineBorder(Color.black));
             setOpaque(true);
             setBackground(Color.decode("#206d99"));
 
-            setActionCommand("button");
+            setActionCommand(actionCommand);
         }
     }
 }

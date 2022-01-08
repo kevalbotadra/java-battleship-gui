@@ -1,23 +1,20 @@
 package battleship;
 
+
 public class Ship{
     String name;
     int length;
-    int direction;
-
-    public static final int unset = -1;
-    public static final int horizontal = 0;
-    public static final int vertical = 1;
+    Direction direction;
     
     public Ship(String name, int length){
         this.name = name;
         this.length = length;
 
-        this.direction = unset;
+        this.direction = Direction.UNSET;
     }
 
     public boolean isDirectionSet(){
-        if(direction == unset){
+        if(direction == Direction.UNSET){
             return false;
         }
         else{
@@ -25,13 +22,13 @@ public class Ship{
         }
     }
     
-    public void setDirection(int direction){
-        if(direction != unset && direction != horizontal && direction != vertical){
+    public void setDirection(Direction direction){
+        if(direction != Direction.UNSET && direction != Direction.HORIZONTAL && direction != Direction.VERTICAL){
             this.direction = direction;
         }
     }
 
-    public int getDirection(){
+    public Direction getDirection(){
         return direction;
     }
 

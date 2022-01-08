@@ -11,18 +11,25 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class PlayerBoard extends JPanel implements ActionListener {
+public class PlayerBoard extends JPanel {
     private static int num = 11;
 
     // variables to keep track of turns
     private boolean turn = false;
 
     private static GameTile[][] gameTiles;
+
+    private boolean[][] shipPlacements;
+
+    private boolean[][] hitOrMiss;
  
 
-    public PlayerBoard() {
+    public PlayerBoard(ActionListener listener) {
         setLayout(new GridLayout(num, num));
         setBounds(375, 50, 650, 650);
+
+
+        shipPlacements = new boolean[10][10];
 
         // define an array of GameTiles equal to 100 (the amount of game tiles that should exist)
         ArrayList<GameTile> listGameTiles = new ArrayList<GameTile>();
@@ -49,8 +56,8 @@ public class PlayerBoard extends JPanel implements ActionListener {
                 this.add(new Tile(""));
             } else {
                 // create a new tile, add it to the gameTiles list, and place it at the i value in the gridlayout
-                GameTile gameTile = new GameTile(true);
-                gameTile.addActionListener(this);
+                GameTile gameTile = new GameTile("playerBoardTile", true);
+                gameTile.addActionListener(listener);
                 listGameTiles.add(gameTile);
                 this.add(gameTile);
             }
@@ -85,12 +92,42 @@ public class PlayerBoard extends JPanel implements ActionListener {
         
     }
 
-
-
-    public void actionPerformed(ActionEvent e){
-        GameTile tappedTile = (GameTile)e.getSource();
-        System.out.println(tappedTile.row);
-       
+    public void disableButtons(){
+        for (int i = 0; i < 10; i++){
+            for (int k = 0; k < 10; k++){
+                gameTiles[i][k].setEnabled(false);
+            }
+        }
     }
-    
+
+    public void enableButtons(){
+        for (int i = 0; i < 10; i++){
+            for (int k = 0; k < 10; k++){
+                gameTiles[i][k].setEnabled(true);
+            }
+        }
+    }
+
+    public void placeShip(Ship ship, int xCord, int yCord, Direction direction){
+        if (direction == Direction.HORIZONTAL){
+            if((xCord + ship.length) > 10 || (xCord - ship.length) < 0){
+                return; 
+            }
+        } else if (direction == Direction.VERTICAL){
+            if((yCord + ship.length) > 10 || (yCord - ship.length) < 0){
+                return;
+            }
+        }
+
+        int counter = 1;
+        for (int i = 0; i < ship.length; i++){
+            if (direction == Direction.HORIZONTAL){
+                
+            } else if (direction == Direction.VERTICAL){
+
+            }
+        }
+
+
+    }
 }
