@@ -54,15 +54,18 @@ public class Game implements ActionListener {
         frame.add(sideButtons);
         
 
-        
-
         setShipsPlacedLabel();     
 
-
+        
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+        
+
     }
+
+   
 
     public void setShipsPlacedLabel(){
         JLabel shipsPlacedLabel = new JLabel();
@@ -89,24 +92,31 @@ public class Game implements ActionListener {
     
     public void actionPerformed(ActionEvent e){
         if (e.getActionCommand() == "restart"){
-            otherBoard.clearBoard();
-            otherBoard.setShips();
+            otherBoard.resetBoard();
+            playerBoard.clearBoard();
         }
 
-        if (e.getActionCommand() == "playerBoardTile"){
-            GameTile tappedTile = (GameTile)e.getSource();
-            turn = 1;
-            // setButtons(turn);
+        if(phase == Phase.SETUP){
+            if (e.getActionCommand() == "playerBoardTile"){
+                GameTile tappedTile = (GameTile)e.getSource();
+                playerBoard.placeShip(tappedTile.row, tappedTile.column);
+            }
         }
 
-        if (e.getActionCommand() == "otherBoardTile"){
-            GameTile tappedTile = (GameTile)e.getSource();
-            otherBoard.checkHitOrMiss(tappedTile.row, tappedTile.column);
-            turn = 0;
-            // setButtons(turn);
+        if (phase == Phase.GAME){
+            if (e.getActionCommand() == "playerBoardTile"){
+                GameTile tappedTile = (GameTile)e.getSource();
+                turn = 1;
+                // setButtons(turn);
+            }
+    
+            if (e.getActionCommand() == "otherBoardTile"){
+                GameTile tappedTile = (GameTile)e.getSource();
+                otherBoard.checkHitOrMiss(tappedTile.row, tappedTile.column);
+                turn = 0;
+                // setButtons(turn);
+            }
         }
-
         
     }
-
 }
