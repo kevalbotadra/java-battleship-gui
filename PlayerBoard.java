@@ -220,10 +220,9 @@ public class PlayerBoard extends JPanel {
         for (Ship ship : ships) {
             while (true) {
                 // generate a random x and y coordinate
-                int yCord = rand.nextInt(10);
-                int xCord = rand.nextInt(10);
+                int x = rand.nextInt(10);
+                int y = rand.nextInt(10);
 
-                System.out.println(yCord + ", " + xCord);
                 // generate a random direction (horizontal : 0 or vertical : 1)
                 int directionIdx = rand.nextInt(2);
 
@@ -233,30 +232,31 @@ public class PlayerBoard extends JPanel {
                 } else {
                     direction = Direction.VERTICAL;
                 }
-                ship.direction = direction;
 
                 // overlap boolean indicates if overlap exists
                 boolean overlap = false;
 
                 if (direction == Direction.HORIZONTAL) {
-                    if (xCord > 5) {
-                        xCord = xCord - ship.length;
+                    if (y > (10 - ship.length)) {
+                        y = y - ship.length;
                     }
 
                     for (int i = 0; i < ship.length; i++) {
-                        if (gameTiles[xCord][yCord + i].getIcon() != null) {
+                        if (gameTiles[x][y + i].getIcon() != null) {
+                            System.out.println("overlap " + x + ", " + y);
                             overlap = true;
                         }
                     }
                 }
 
                 if (direction == Direction.VERTICAL) {
-                    if (yCord < 5) {
-                        yCord = yCord + ship.length;
+                    if (x < (10 - ship.length)) {
+                        x = x + ship.length;
                     }
 
                     for (int i = 0; i < ship.length; i++) {
-                        if (gameTiles[xCord - i][yCord].getIcon() != null) {
+                        if (gameTiles[x - i][y].getIcon() != null) {
+                            System.out.println("overlap " + x + ", " + y);
                             overlap = true;
                         }
                     }
@@ -265,38 +265,33 @@ public class PlayerBoard extends JPanel {
                 if (!overlap) {
                     if (direction == Direction.HORIZONTAL) {
                         ship.direction = direction;
-                        if (yCord > 5) {
-                            yCord = yCord - ship.length;
+                        if (y > (10 - ship.length)) {
+                            y = y - ship.length;
                         }
 
                         for (int i = 0; i < ship.length; i++) {
-                            ship.setXAndY(xCord, yCord);
                             ImageIcon imageIcon = new ImageIcon("BattleshipImages/" + ship.name + "/" + (i + 1) + ".png"); // load the image to a
                             Image image = imageIcon.getImage(); // transform it
                             Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
                             imageIcon = new ImageIcon(newimg); // transform it back
-                            gameTiles[xCord][yCord + i].setIcon(imageIcon);
-                            
+                            gameTiles[x][y + i].setIcon(imageIcon);
                         }
                     }
 
                     if (direction == Direction.VERTICAL) {
                         ship.direction = direction;
-                        if (xCord < 5) {
-                            xCord = xCord + ship.length;
+                        if (x < (10 - ship.length)) {
+                            x = x + ship.length;
                         }
 
                         for (int i = 0; i < ship.length; i++) {
-                            ship.setXAndY(xCord, yCord);
                             ImageIcon imageIcon = new ImageIcon("BattleshipImages/" + ship.name + "/" + (i + 1) + "_flip.png"); // load the image to a
                             Image image = imageIcon.getImage(); // transform it
                             Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
                             imageIcon = new ImageIcon(newimg); // transform it back
-                            gameTiles[xCord - i][yCord].setIcon(imageIcon);
-                            
+                            gameTiles[x - i][y].setIcon(imageIcon);
                         }
                     }
-
                     break;
                 }
             }

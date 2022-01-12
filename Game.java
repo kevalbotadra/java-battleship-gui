@@ -188,10 +188,11 @@ public class Game implements ActionListener {
             }
 
             if (e.getActionCommand() == "randomize"){
+                shipPlace = 4;
                 playerBoard.randomizeBoard();
                 playerBoard.gatherShipPlacements();
             }
-            
+
             if(e.getActionCommand() == "rotate"){
                 if(!(rotateCounter % 2 == 0)){
                     direction = Direction.VERTICAL;
