@@ -17,6 +17,7 @@ class GameTile extends JButton {
             setOpaque(true);
             setBackground(Color.decode("#206d99"));
 
+            setEnabled(true);
             setActionCommand(actionCommand);
         }
     }

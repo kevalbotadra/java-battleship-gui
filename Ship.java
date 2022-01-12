@@ -5,6 +5,9 @@ public class Ship{
     String name;
     int length;
     Direction direction;
+
+    int startingX;
+    int startingY;
     
     public Ship(String name, int length){
         this.name = name;
@@ -12,20 +15,14 @@ public class Ship{
 
         this.direction = Direction.UNSET;
     }
-
-    public boolean isDirectionSet(){
-        if(direction == Direction.UNSET){
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
     
     public void setDirection(Direction direction){
-        if(direction != Direction.UNSET && direction != Direction.HORIZONTAL && direction != Direction.VERTICAL){
-            this.direction = direction;
-        }
+        this.direction = direction;
+    }
+
+    public void setXAndY(int x, int y){
+        startingX = x;
+        startingY = y;
     }
 
     public Direction getDirection(){

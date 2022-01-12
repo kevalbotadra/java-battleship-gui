@@ -10,6 +10,7 @@ import org.w3c.dom.events.MouseEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class PlayerBoard extends JPanel {
     private static int num = 11;
@@ -23,8 +24,6 @@ public class PlayerBoard extends JPanel {
 
     private boolean[][] hitOrMiss;
 
-    private Direction shipDirection = Direction.HORIZONTAL;
-
     private Ship carrier;
     private Ship battleship;
     private Ship submarine;
@@ -33,9 +32,9 @@ public class PlayerBoard extends JPanel {
 
     private Ship[] ships;
 
-    public PlayerBoard(ActionListener listener) {
+    public PlayerBoard(ActionListener listener, Ship carrier, Ship battleship, Ship submarine, Ship destroyer, Ship cruiser) {
         setLayout(new GridLayout(num, num));
-        setBounds(375, 75, 650, 650);
+        setBounds(375, 90, 650, 650);
 
         shipPlacements = new boolean[10][10];
 
@@ -99,13 +98,6 @@ public class PlayerBoard extends JPanel {
         // assign the newly created 2d Game Tile array to the class's game tile array
         gameTiles = arrayGameTiles;
 
-        // create our 5 ships
-        carrier = new Ship("Carrier", 5);
-        battleship = new Ship("Battleship", 4);
-        submarine = new Ship("Submarine", 3);
-        cruiser = new Ship("Cruiser", 3);
-        destroyer = new Ship("Destroyer", 2);
-
         // set the ships list to all the ships
         ships = new Ship[5];
         ships[0] = carrier;
@@ -114,17 +106,6 @@ public class PlayerBoard extends JPanel {
         ships[3] = cruiser;
         ships[4] = destroyer;
 
-        
-        this.setFocusable(true);
-        String T = "t";
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, 0), T);
-        this.getActionMap().put(T, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                shipDirection = Direction.VERTICAL;
-            }
-        });
-        this.requestFocus();
     }
 
 
@@ -144,66 +125,200 @@ public class PlayerBoard extends JPanel {
         }
     }
 
-    public void clearBoard() {
+    public void resetBoard() {
         // loops over every row
         for (int i = 0; i < 10; i++) {
             // loop over every column
             for (int k = 0; k < 10; k++) {
+                shipPlacements[i][k] = false;
                 gameTiles[i][k].setIcon(null);
                 gameTiles[i][k].revalidate();
             }
         }
     }
 
-    public void placeShip(int xCord, int yCord) {
-        Direction direction = shipDirection;
-        Ship ship = carrier;
+    public int placeShip(Ship ship, int xCord, int yCord, Direction direction) {
+        System.out.println(ship.name + direction);
+        ship.setDirection(direction);
         if (direction == Direction.HORIZONTAL) {
             if ((yCord + ship.length) > 11) {
-                System.out.println("here");
-                return;
+                return 0;
             }
         } else if (direction == Direction.VERTICAL) {
-            if ((xCord + ship.length) > 11) {
-                System.out.println("here");
-                return;
+            if ((xCord - ship.length) < 0) {
+                return 0;
             }
         }
+
+        int checkCounter = 0;
+        for (int i = 0; i < ship.length; i++) {
+            if (direction == Direction.HORIZONTAL) {
+                if(gameTiles[xCord][(yCord + checkCounter)].getIcon() != null){
+                    return 1;
+                }
+
+                checkCounter++;
+            } else if (direction == Direction.VERTICAL) {
+                if(gameTiles[(xCord - checkCounter)][yCord].getIcon() != null){
+                    return 1;
+                }
+
+                checkCounter++;
+            }
+        }
+
 
         int counter = 0;
         for (int i = 0; i < ship.length; i++) {
             if (direction == Direction.HORIZONTAL) {
-                ImageIcon imageIcon = new ImageIcon("BattleshipImages/Battleship/" + i + ".png"); // load the image to a
-                                                                                                  // imageIcon
+                ship.setXAndY(yCord, xCord);
+                ImageIcon imageIcon = new ImageIcon("BattleshipImages/" + ship.name + "/" + (i + 1) + ".png"); // load the image to a
                 Image image = imageIcon.getImage(); // transform it
                 Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
                 imageIcon = new ImageIcon(newimg); // transform it back
-                gameTiles[xCord][(yCord + counter) - 1].setIcon(imageIcon);
+                System.out.println(xCord + ", " +(yCord + counter));
+                gameTiles[xCord][yCord + counter].setIcon(imageIcon);
 
                 counter++;
             } else if (direction == Direction.VERTICAL) {
+                ship.setXAndY(yCord, xCord);
+                ImageIcon imageIcon = new ImageIcon("BattleshipImages/" + ship.name + "/" + (i + 1) + "_flip.png"); // load the image to a
+                Image image = imageIcon.getImage(); // transform it
+                Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+                imageIcon = new ImageIcon(newimg); // transform it back
+                gameTiles[(xCord - counter)][yCord].setIcon(imageIcon);
 
+                counter++;
+            }
+        }
+
+        if(ship.name.equals("Destroyer")){return 3;}
+
+        return 2;
+    }
+
+    public void gatherShipPlacements(){
+        // loops over every row
+        for (int i = 0; i < 10; i++) {
+            // loop over every column
+            for (int k = 0; k < 10; k++) {
+                if(gameTiles[i][k].getIcon() != null){
+                    shipPlacements[i][k] = true;
+                } else {
+                    shipPlacements[i][k] = false;
+                }
             }
         }
     }
 
-    public void eraseCurrentShip(int xCord, int yCord, Direction direction) {
-        Ship ship = carrier;
+    public void randomizeBoard(){
+        resetBoard();
+        // instantate a random class
+        Random rand = new Random();
+
+        // iterate over every ship
+        for (Ship ship : ships) {
+            while (true) {
+                // generate a random x and y coordinate
+                int yCord = rand.nextInt(10);
+                int xCord = rand.nextInt(10);
+
+                System.out.println(yCord + ", " + xCord);
+                // generate a random direction (horizontal : 0 or vertical : 1)
+                int directionIdx = rand.nextInt(2);
+
+                Direction direction;
+                if(directionIdx == 0){
+                    direction = Direction.HORIZONTAL;
+                } else {
+                    direction = Direction.VERTICAL;
+                }
+                ship.direction = direction;
+
+                // overlap boolean indicates if overlap exists
+                boolean overlap = false;
+
+                if (direction == Direction.HORIZONTAL) {
+                    if (xCord > 5) {
+                        xCord = xCord - ship.length;
+                    }
+
+                    for (int i = 0; i < ship.length; i++) {
+                        if (gameTiles[xCord][yCord + i].getIcon() != null) {
+                            overlap = true;
+                        }
+                    }
+                }
+
+                if (direction == Direction.VERTICAL) {
+                    if (yCord < 5) {
+                        yCord = yCord + ship.length;
+                    }
+
+                    for (int i = 0; i < ship.length; i++) {
+                        if (gameTiles[xCord - i][yCord].getIcon() != null) {
+                            overlap = true;
+                        }
+                    }
+                }
+
+                if (!overlap) {
+                    if (direction == Direction.HORIZONTAL) {
+                        ship.direction = direction;
+                        if (yCord > 5) {
+                            yCord = yCord - ship.length;
+                        }
+
+                        for (int i = 0; i < ship.length; i++) {
+                            ship.setXAndY(xCord, yCord);
+                            ImageIcon imageIcon = new ImageIcon("BattleshipImages/" + ship.name + "/" + (i + 1) + ".png"); // load the image to a
+                            Image image = imageIcon.getImage(); // transform it
+                            Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+                            imageIcon = new ImageIcon(newimg); // transform it back
+                            gameTiles[xCord][yCord + i].setIcon(imageIcon);
+                            
+                        }
+                    }
+
+                    if (direction == Direction.VERTICAL) {
+                        ship.direction = direction;
+                        if (xCord < 5) {
+                            xCord = xCord + ship.length;
+                        }
+
+                        for (int i = 0; i < ship.length; i++) {
+                            ship.setXAndY(xCord, yCord);
+                            ImageIcon imageIcon = new ImageIcon("BattleshipImages/" + ship.name + "/" + (i + 1) + "_flip.png"); // load the image to a
+                            Image image = imageIcon.getImage(); // transform it
+                            Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+                            imageIcon = new ImageIcon(newimg); // transform it back
+                            gameTiles[xCord - i][yCord].setIcon(imageIcon);
+                            
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    public void eraseShip(Ship ship, int xCord, int yCord) {
+        System.out.println(ship.name + ship.direction);
         int counter = 0;
         for (int i = 0; i < ship.length; i++) {
-            if (direction == Direction.HORIZONTAL) {
-                ImageIcon imageIcon = new ImageIcon("BattleshipImages/Battleship/" + i + ".png"); // load the image to a
-                                                                                                  // imageIcon
-                Image image = imageIcon.getImage(); // transform it
-                Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
-                imageIcon = new ImageIcon(newimg); // transform it back
-                gameTiles[xCord][(yCord + counter) - 1].setIcon(null);
-                gameTiles[xCord][(yCord + counter) - 1].revalidate();
+            if (ship.direction == Direction.HORIZONTAL) {
+                gameTiles[xCord][(yCord + counter)].setIcon(null);
+                gameTiles[xCord][(yCord + counter)].revalidate();
 
                 counter++;
-            } else if (direction == Direction.VERTICAL) {
+            } else if (ship.direction == Direction.VERTICAL) {
+                gameTiles[(xCord - counter)][yCord].setIcon(null);
+                gameTiles[(xCord - counter)][yCord].revalidate();
 
+                counter++;
             }
         }
     }
+
 }
