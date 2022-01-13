@@ -27,7 +27,6 @@ public class OtherBoard extends JPanel {
 
     private Ship[] ships;
 
-
     public OtherBoard(ActionListener listener) {
         super(new GridLayout(num, num)); // created a grid layout 11 x 11
 
@@ -91,6 +90,8 @@ public class OtherBoard extends JPanel {
             }
         }
 
+        
+
         // assign the newly created 2d Game Tile array to the class's game tile array
         gameTiles = arrayGameTiles;
 
@@ -98,11 +99,11 @@ public class OtherBoard extends JPanel {
         shipPlacements = new boolean[10][10];
 
         // create our 5 ships
-        carrier = new Ship("Carrier", 5);
-        battleship = new Ship("Battleship", 4);
-        submarine = new Ship("Submarine", 3);
-        cruiser = new Ship("Cruiser", 3);
-        destroyer = new Ship("Destroyer", 2);
+        carrier = new Ship("Carrier", 5, 0, Color.decode("#18202e"));
+        battleship = new Ship("Battleship", 4, 1, Color.decode("#415a74"));
+        submarine = new Ship("Submarine", 3, 2, Color.decode("#d0d0d2"));
+        cruiser = new Ship("Cruiser", 3, 3, Color.decode("#f3cba0"));
+        destroyer = new Ship("Destroyer", 2, 4, Color.decode("#c3989e"));
 
         // set the ships list to all the ships
         ships = new Ship[5];
@@ -113,7 +114,6 @@ public class OtherBoard extends JPanel {
         ships[4] = destroyer;
 
         setShips();
-
     }
 
     public void setShips() {
@@ -139,9 +139,8 @@ public class OtherBoard extends JPanel {
 
                 // overlap boolean indicates if overlap exists
                 boolean overlap = false;
-
                 if (direction == Direction.HORIZONTAL) {
-                    if (y > 5) {
+                    if (y > (10 - ship.length)) {
                         y = y - ship.length;
                     }
 
@@ -153,12 +152,12 @@ public class OtherBoard extends JPanel {
                 }
 
                 if (direction == Direction.VERTICAL) {
-                    if (x > 5) {
-                        x = x - ship.length;
+                    if (x < (10 - ship.length)) {
+                        x = x + ship.length;
                     }
 
                     for (int i = 0; i < ship.length; i++) {
-                        if (shipPlacements[x + i][y]) {
+                        if (shipPlacements[x - i][y]) {
                             overlap = true;
                         }
                     }
@@ -167,9 +166,11 @@ public class OtherBoard extends JPanel {
                 if (!overlap) {
                     if (direction == Direction.HORIZONTAL) {
                         ship.direction = direction;
-                        if (y > 5) {
+                        if (y > (10 - ship.length)) {
                             y = y - ship.length;
                         }
+
+                        ship.setXAndY(x, y);
 
                         for (int i = 0; i < ship.length; i++) {
                             shipPlacements[x][y + i] = true;
@@ -178,15 +179,16 @@ public class OtherBoard extends JPanel {
 
                     if (direction == Direction.VERTICAL) {
                         ship.direction = direction;
-                        if (x > 5) {
-                            x = x - ship.length;
+                        if (x < (10 - ship.length)) {
+                            x = x + ship.length;
                         }
+
+                        ship.setXAndY(x, y);
 
                         for (int i = 0; i < ship.length; i++) {
-                            shipPlacements[x + i][y] = true;
+                            shipPlacements[x - i][y] = true;
                         }
                     }
-
                     break;
                 }
             }
@@ -213,13 +215,36 @@ public class OtherBoard extends JPanel {
         gameTiles[xCord][yCord].setBackground(color);
     }
 
-    public void checkHitOrMiss(int xCord, int yCord) {
+    public int checkHitOrMiss(int xCord, int yCord) {
         if(shipPlacements[xCord][yCord]){ // indicates if the xCord and yCord is a hit
             hitOrMiss[xCord][yCord] = true;
-            this.setColorTile(xCord, yCord, Color.RED);
+            int shipIdx = getShipFromXAndY(xCord, yCord);
+            this.setColorTile(xCord, yCord, ships[shipIdx].getColor());
+            return 1;
         } else {
             this.setColorTile(xCord, yCord, Color.GREEN);
+            return 0;
         }
+    }
+
+    public int getShipFromXAndY(int xCord, int yCord){
+        for (Ship ship : ships){
+            if(ship.direction == Direction.HORIZONTAL){
+                for (int i = 0; i < ship.length; i++){
+                    if (ship.getX() == xCord && (ship.getY() + i) == yCord){
+                        return ship.getIdx();
+                    }
+                }
+            } else {
+                for (int i = 0; i < ship.length; i++){
+                    if ((ship.getX() - i) == xCord && ship.getY() == yCord){
+                        return ship.getIdx();
+                    }
+                }   
+            }
+        }
+
+        return 10;
     }
 
     public void disableButtons(){

@@ -34,4 +34,8 @@ public class SideButtons extends JPanel {
     public void changeFinishToRestart(){
         buttons[0].setText("Restart");
     }
+
+    public void changeRestartToFinish(){
+        buttons[0].setText("Finish");
+    }
 }   

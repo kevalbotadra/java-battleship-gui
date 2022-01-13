@@ -24,6 +24,7 @@ public class Game implements ActionListener {
     private SideButtons sideButtons;
     private RotateButton rotateButton;
     private EraseButton eraseButton;
+    private ConfirmButton confirmButton;
 
 
     private int rotateCounter = 1;
@@ -61,6 +62,8 @@ public class Game implements ActionListener {
 
     private JLabel shipPlacementDirectionLabel;
     private JLabel directionLabel;
+    private JLabel gamePhaseLabel;
+    private JLabel turnLabel;
 
     public Game(){
         frame = new JFrame();
@@ -71,11 +74,11 @@ public class Game implements ActionListener {
         frame.setLayout(null);
         frame.setSize(1050, 900);
 
-        carrier = new Ship("Carrier", 5);
-        battleship = new Ship("Battleship", 4);
-        submarine = new Ship("Submarine", 3);
-        cruiser = new Ship("Cruiser", 3);
-        destroyer = new Ship("Destroyer", 2);
+        carrier = new Ship("Carrier", 5, 0, Color.GREEN);
+        battleship = new Ship("Battleship", 4, 1, Color.BLACK);
+        submarine = new Ship("Submarine", 3, 2, Color.PINK);
+        cruiser = new Ship("Cruiser", 3, 3, Color.BLUE);
+        destroyer = new Ship("Destroyer", 2, 4, Color.RED);
 
         // set the ships list to all the ships
         ships = new Ship[5];
@@ -104,16 +107,32 @@ public class Game implements ActionListener {
         eraseButton = new EraseButton(this);
         frame.add(eraseButton);
 
+        confirmButton = new ConfirmButton(this);
+        confirmButton.setVisible(false);
+        frame.add(confirmButton);
+
         directionLabel = new JLabel("Ship Direction: Horizontal");
         directionLabel.setFont(directionLabel.getFont().deriveFont(directionLabel.getFont().getStyle() | Font.BOLD));
         directionLabel.setBounds(845, 50, 200, 50);
         frame.add(directionLabel);
         
-
         shipPlacementDirectionLabel = new JLabel();
-        shipPlacementDirectionLabel.setText("<html>Tap anywhere on the grid to place your ships on the board.<br>Note that the position you tap will be the end of the ship.<br>If you are horizontal, the ship will start at the clicked position and be placed rightwards. If you are vertical, the ship will placed upwards.</html>");
+        shipPlacementDirectionLabel.setText("<html>Tap anywhere on the grid to place your ships on the board. Note that the position you tap will be the end of the ship. If you are horizontal, the ship will start at the clicked position and be placed rightwards. If you are vertical, the ship will placed upwards.</html>");
         shipPlacementDirectionLabel.setBounds(430, 0, 400, 100);
         frame.add(shipPlacementDirectionLabel);
+
+        gamePhaseLabel = new JLabel();
+        gamePhaseLabel.setText("<html>When it's your turn, click anywhere on the small board, and cofirm it to make a guess. If you get a hit, the board will turn the color of the boat (which will be anything but green), and if you get a miss the board will turn green. In order to win, destroy all the computer's ships, before it destroys yours.</html>");
+        gamePhaseLabel.setBounds(430, 0, 400, 100);
+        gamePhaseLabel.setVisible(false);
+        frame.add(gamePhaseLabel);
+
+        turnLabel = new JLabel("Turn: Yours");
+        turnLabel.setFont(directionLabel.getFont().deriveFont(directionLabel.getFont().getStyle() | Font.BOLD));
+        turnLabel.setBounds(860, 50, 200, 50);
+        turnLabel.setVisible(false);
+        frame.add(turnLabel);
+
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
@@ -126,13 +145,21 @@ public class Game implements ActionListener {
         directionLabel.setVisible(choice);
     }
 
-    public void setButtons(int turn){
+    public void gameVisibility(boolean choice){
+        turnLabel.setVisible(choice);
+        confirmButton.setVisible(choice);
+        gamePhaseLabel.setVisible(choice);
+    }
+
+    public void setTurn(int turn){
         if (turn == 0){
-            playerBoard.enableButtons();
-            otherBoard.disableButtons();
-        } else {
-            otherBoard.enableButtons();
+            turnLabel.setText("Turn: Yours");
             playerBoard.disableButtons();
+            otherBoard.enableButtons();
+        } else {
+            turnLabel.setText("Turn: Computers");
+            otherBoard.disableButtons();
+            playerBoard.enableButtons();
         }
     }
 
@@ -143,10 +170,11 @@ public class Game implements ActionListener {
     public void actionPerformed(ActionEvent e){
         if (e.getActionCommand() == "restart/finish"){
             if (phase == Phase.SETUP){
-                if (shipPlace == 4){
+                if (shipPlace == 5){
                     phase = Phase.GAME;
                     shipPlace = 0;
                     setupVisbility(false);
+                    gameVisibility(true);
                     playerBoard.gatherShipPlacements();
                     sideButtons.changeFinishToRestart();
                     JOptionPane.showMessageDialog(frame, "Now that you are all setup, let's start the game.\nIf your ship's are not placed how you want them to be, please tap the 'Restart' button.");
@@ -159,6 +187,8 @@ public class Game implements ActionListener {
                 shipPlace = 0;
                 placeable = true;
                 setupVisbility(true);
+                gameVisibility(false);
+                sideButtons.changeRestartToFinish();
                 otherBoard.resetBoard();
                 playerBoard.resetBoard();
             }
@@ -182,13 +212,14 @@ public class Game implements ActionListener {
                     } else if (placed == 2){
                         shipPlace++;
                     } else if (placed == 3){
+                        shipPlace = 5;
                         placeable = false;
                     }
                 }
             }
 
             if (e.getActionCommand() == "randomize"){
-                shipPlace = 4;
+                shipPlace = 5;
                 playerBoard.randomizeBoard();
                 playerBoard.gatherShipPlacements();
             }
@@ -201,16 +232,31 @@ public class Game implements ActionListener {
                     direction = Direction.HORIZONTAL;
                     directionLabel.setText("Ship Direction: Horizontal");
                 }
+
+                Ship ship = !(shipPlace == 5) ? ships[shipPlace - 1] : ships[4];
+
+                playerBoard.eraseShip(ship, lastTappedTileX, lastTappedTileY);
+                int placed = playerBoard.placeShip(ship, lastTappedTileX, lastTappedTileY, direction);
+
+                if(placed == 0){
+                    JOptionPane.showMessageDialog(frame, "This ship will not fit within the bounds at this tile.\nPlease try rotating it another way.");
+                    shipPlace --;
+                } else if (placed == 1){
+                    JOptionPane.showMessageDialog(frame, "This ship will interfere with another ship.\nPlease try rotating it somewhere else.");
+                    shipPlace--;
+                }
+
+                
                 rotateCounter ++;
             }
 
             if(e.getActionCommand() == "erase"){
                 if(eraseCounter == 0){
-                    if (shipPlace != 4){
+                    if (shipPlace != 5){
                         playerBoard.eraseShip(ships[shipPlace - 1], lastTappedTileX, lastTappedTileY);
                         shipPlace = shipPlace - 1;
                     } else {
-                        playerBoard.eraseShip(ships[shipPlace], lastTappedTileX, lastTappedTileY);
+                        playerBoard.eraseShip(ships[4], lastTappedTileX, lastTappedTileY);
                     }
                     placeable = true;
                     eraseButton.setText("<html><center>Erase<br>All Ships</center></html>");
@@ -230,17 +276,21 @@ public class Game implements ActionListener {
         }
 
         if (phase == Phase.GAME){
-            if (e.getActionCommand() == "playerBoardTile"){
-                GameTile tappedTile = (GameTile)e.getSource();
-                turn = 1;
-                // setButtons(turn);
-            }
-    
             if (e.getActionCommand() == "otherBoardTile"){
                 GameTile tappedTile = (GameTile)e.getSource();
-                otherBoard.checkHitOrMiss(tappedTile.row, tappedTile.column);
-                turn = 0;
-                // setButtons(turn);
+                int result = otherBoard.checkHitOrMiss(tappedTile.row, tappedTile.column);
+                if (result == 0){
+                    setTurn(1);
+                    while(true){
+                        int error = playerBoard.randomHitOrMiss();
+                        if (error != 400){
+                            break;
+                        }
+                    }
+                    
+                    setTurn(0);
+                }
+                
             }
         }
         
