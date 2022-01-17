@@ -17,7 +17,7 @@ public class OtherBoard extends JPanel {
 
     private boolean[][] shipPlacements;
 
-    private boolean[][] hitOrMiss;
+    private String[][] hitOrMiss;
     
     private Ship carrier;
     private Ship battleship;
@@ -26,13 +26,14 @@ public class OtherBoard extends JPanel {
     private Ship cruiser;
 
     private Ship[] ships;
+    private Ship[] hitShips;
 
     public OtherBoard(ActionListener listener) {
         super(new GridLayout(num, num)); // created a grid layout 11 x 11
 
         this.setBounds(25, 20, 325, 325);
 
-        hitOrMiss = new boolean[10][10];
+        hitOrMiss = new String[10][10];
 
         // define an array of GameTiles equal to 100 (the amount of game tiles that
         // should exist)
@@ -85,12 +86,12 @@ public class OtherBoard extends JPanel {
                 // assign the row value and the column value to the obtained tile
                 arrayGameTiles[i][k] = tile;
 
+                hitOrMiss[i][k] = "None";
+
                 // increment the tile counter
                 tileCounter++;
             }
         }
-
-        
 
         // assign the newly created 2d Game Tile array to the class's game tile array
         gameTiles = arrayGameTiles;
@@ -113,9 +114,19 @@ public class OtherBoard extends JPanel {
         ships[3] = cruiser;
         ships[4] = destroyer;
 
+        hitShips = new Ship[5];
+
         setShips();
     }
 
+    public String[][] getHitOrMiss(){
+        return hitOrMiss;
+    }
+
+    public GameTile[][] getGameTiles(){
+        return gameTiles;
+    }
+    
     public void setShips() {
         // instantate a random class
         Random rand = new Random();
@@ -217,11 +228,12 @@ public class OtherBoard extends JPanel {
 
     public int checkHitOrMiss(int xCord, int yCord) {
         if(shipPlacements[xCord][yCord]){ // indicates if the xCord and yCord is a hit
-            hitOrMiss[xCord][yCord] = true;
+            hitOrMiss[xCord][yCord] = "Hit";
             int shipIdx = getShipFromXAndY(xCord, yCord);
             this.setColorTile(xCord, yCord, ships[shipIdx].getColor());
             return 1;
         } else {
+            hitOrMiss[xCord][yCord] = "Miss";
             this.setColorTile(xCord, yCord, Color.GREEN);
             return 0;
         }
@@ -263,4 +275,27 @@ public class OtherBoard extends JPanel {
         }
     }
 
+    public Ship[] getHitShips(){
+        for (Ship ship : ships){
+            int numHits = 0;
+            for (int i = 0; i < ship.length; i++){
+                if (ship.getDirection() == Direction.VERTICAL){
+                    if(hitOrMiss[ship.getX() - i][ship.getY()] == "Hit"){
+                        numHits ++;
+                    } 
+                } else {
+                    if(hitOrMiss[ship.getX()][ship.getY() + i] == "Hit"){
+                        numHits ++;
+                    } 
+                }
+                
+            }
+            System.out.println("numhits is " + numHits);
+            if (numHits == ship.length){
+                hitShips[ship.getIdx()] = ship;
+            }
+        }
+
+        return hitShips;
+    }
 }

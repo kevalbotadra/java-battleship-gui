@@ -34,11 +34,11 @@ public class PlayerBoard extends JPanel {
     private Ship cruiser;
 
     private Ship[] ships;
+    private Ship[] hitShips = new Ship[5];
 
+    
     private boolean hit = false;
     private int hitCounter = 0;
-    private Ship hitShip;
-
     private int lastHitX = -1;
     private int lastHitY = -1;
     private String shipDirection = "None";
@@ -122,7 +122,6 @@ public class PlayerBoard extends JPanel {
         ships[2] = submarine;
         ships[3] = cruiser;
         ships[4] = destroyer;
-        hitShip = carrier;
 
     }
 
@@ -312,10 +311,23 @@ public class PlayerBoard extends JPanel {
                             gameTiles[x - i][y].setDisabledIcon(imageIcon);
                         }
                     }
+
+                    ship.setXAndY(x, y);
                     break;
                 }
             }
         }
+    }
+
+    public void resetRandomHitOrMissVariables(){
+        hit = false;
+        hitCounter = 0;
+        lastHitX = -1;
+        lastHitY = -1;
+        shipDirection = "None";
+        triedDirections.clear();
+        tryOtherWay = false;
+        bothWaysTried = false;
     }
 
     public int randomHitOrMiss() {  
@@ -325,81 +337,166 @@ public class PlayerBoard extends JPanel {
         int x = -1;
         int y = -1;
 
+
         if (lastHitX == -1 && lastHitY == -1){
             x = rand.nextInt(10);
             y = rand.nextInt(10);
+
+            if(hitOrMiss[x][y].equals("Miss") || hitOrMiss[x][y].equals("Hit")){
+                resetRandomHitOrMissVariables();
+                return 1;
+            }
+
         } else {
             x = lastHitX;
             y = lastHitY;
         }
 
-        if(hitCounter > 0 && shipDirection.equals("None")){
-            System.out.println("choosing a random spot around the last hit value");
+        
+
+        if(hitCounter == 1){
+            System.out.println("choosing a random spot around the last hit value of " + x + ", " + y);
             String[] sides = {"Up", "Down", "Left", "Right"};
+            lastHitX = x;
+            lastHitY = y;
             while (true){
                 int i = 0;
                 trialHitDirection = sides[rand.nextInt(sides.length)];
+                int counter = 0;
                 for (String tried : triedDirections){
                     if(trialHitDirection == tried){
                         i = 1;
+                        counter++;
                     }  
                 }
+
+                if (counter > 0){
+                    continue;
+                }
+                
+                if(counter == 4){
+                    hitCounter = 1;
+                    break;
+                }
+
+                System.out.println("Trying side: " + trialHitDirection);
+                System.out.println(x + ", " + y);
+                if (trialHitDirection.equals("Up")){
+                    if (!((x - 1) < 0)){
+                        x--;
+                    } else {
+                        triedDirections.add("Up");
+                        i = 1;
+                    }
+                } else if (trialHitDirection.equals("Down")){
+                    if (!((x + 1) > 9)){
+                        x++;
+                    } else {
+                        triedDirections.add("Down");
+                        i = 1;
+                    }
+                } else if (trialHitDirection.equals("Right")){ 
+                    if (!((y + 1) > 9)){
+                        y++;
+                    } else {
+                        triedDirections.add("Right");
+                        i = 1;
+                    }
+                } else if (trialHitDirection.equals("Left")){
+                    if (!((y - 1) < 0)){
+                        y--;
+                    } else {
+                        triedDirections.add("Left");
+                        i = 1;
+                    }
+                }
+
                 if (i == 0){
                     break;
                 }
+
+                System.out.println("Already tried");
+
+
             }
             
-            if (trialHitDirection.equals("Up")){
-                if (!((x - 1) < 0)){
-                    x--;
-                }
-            } else if (trialHitDirection.equals("Down")){
-                if (!((x + 1) > 9)){
-                    x++;
-                }
-            } else if (trialHitDirection.equals("Left")){
-                if (!((y + 1) > 9)){
-                    y++;
-                }
-            } else if (trialHitDirection.equals("Right")){
-                if (!((y - 1) < 0)){
-                    y--;
-                }
-            }
-        } else if (!shipDirection.equals("None")){
+            
+        } 
+        
+        if (hitCounter == 2){
             System.out.println("detected that we have a " + shipDirection + " ship. Now gonna increment stuff.");
+            System.out.println(x + ", " + y);
             if (shipDirection.equals("Vertical")){
                 while(true){
+                    System.out.println("tryOtherWay is " + tryOtherWay);
                     if(tryOtherWay){
                         if (!((x + 1) > 9)){
                             System.out.println("incremented down");
                             x++;
                         } else {
                             bothWaysTried = true;
+                            break;
                         }
                     } else {
                         if (!((x - 1) < 0)){
                             System.out.println("incremented up");
                             x--;
                         } else {
+                            System.out.println("here");
                             tryOtherWay = true;
+                            break;
                         }
                     }
 
                     for (int i = 0; i < 5; i++){
-                        if((hitOrMiss[x][y].equals("Hit") || hitOrMiss[x][y].equals("Miss"))){ // checks it the space has been checked already
+                        System.out.println("got here" + x + ", " + y);
+                        System.out.println(hitOrMiss[x][y]);
+                        if((hitOrMiss[x][y].equals("Hit"))){ // checks it the space has been checked already
                             if(tryOtherWay){
-                                if (!((x + 1) > 9)){
-                                    System.out.println("detected some shtuff so incremented the x down again");
-                                    x++;
+                                if(trialHitDirection.equals("Down")){
+                                    System.out.println("x + 1 is " + x + 1);
+                                    if (!(x == 9)){
+                                        System.out.println("detected some shtuff so incremented the x down again");
+                                        x++;
+                                    } else {
+                                        bothWaysTried = true;
+                                        System.out.println("broke da for loop");
+                                        break;
+                                    }
+                                } else {
+                                    System.out.println("x + 1 is " + x + 1);
+                                    if (!((x + 1) > 9)){
+                                        System.out.println("detected some shtuff so incremented the x down again");
+                                        x++;
+                                    } else {
+                                        bothWaysTried = true;
+                                        break;
+                                    }
                                 }
                             } else {
-                                if (!((x - 1) < 0)){
-                                    System.out.println("detected some shtuff so incremented the x up again");
-                                    x--;
+                                if(trialHitDirection.equals("Up")){
+                                    System.out.println("x - 1 is " + x + 1);
+                                    if (!(x == 0)){
+                                        System.out.println("detected some shtuff so incremented the x up again");
+                                        x--;
+                                    } else {
+                                        tryOtherWay = true;
+                                        break;
+                                    }
+                                } else {
+                                    if (!((x - 1) < 0)){
+                                        System.out.println("x - 1 is " + x + 1);
+                                        System.out.println("detected some shtuff so incremented the x up again");
+                                        x--;
+                                    } else {
+                                        tryOtherWay = true;
+                                        break;
+                                    }
                                 }
+                                
                             }
                         } else {
+                            System.out.println("broke the for loop");
                             break;
                         }
                     }
@@ -410,89 +507,143 @@ public class PlayerBoard extends JPanel {
                 while(true){
                     if(tryOtherWay){
                         if (!((y - 1) < 0)){
-                            System.out.println("incremented right");
+                            System.out.println("detected some shtuff so incremented the y right again");
                             y--;
                         } else {
+                            System.out.println("set both ways tried to true");
                             bothWaysTried = true;
+                            break;
                         }
                     } else {
                         if (!((y + 1) > 9)){
-                            System.out.println("incremented left");
+                            System.out.println("detected some shtuff so incremented the y left again");
                             y++;
                         } else {
                             tryOtherWay = true;
+                            System.out.println("set try other way tried to true");
+                            break;
                         }
                     }
-
                     for (int i = 0; i < 5; i++){
+                        System.out.println("got here" + x + ", " + y);
+                        System.out.println(hitOrMiss[x][y]);
                         if((hitOrMiss[x][y].equals("Hit") || hitOrMiss[x][y].equals("Miss"))){ // checks it the space has been checked already
                             if(tryOtherWay){
-                                if (!((y - 1) < 0)){
-                                    System.out.println("detected some shtuff so incremented the y right again");
-                                    y--;
+                                if(trialHitDirection.equals("Right")){
+                                    System.out.println("y - 1 is " + x + 1);
+                                    if (!(y == 0)){
+                                        System.out.println("incremented right");
+                                        y--;
+                                    } else {
+                                        bothWaysTried = true;
+                                        break;
+                                    }
+                                } else {
+                                    System.out.println("y - 1 is " + x + 1);
+                                    if (!((y - 1) <= 0)){
+                                        System.out.println("incremented right");
+                                        y--;
+                                    } else {
+                                        bothWaysTried = true;
+                                        break;
+                                    }
                                 }
                             } else {
-                                if (!((y + 1) > 9)){
-                                    System.out.println("detected some shtuff so incremented the y left again");
-                                    y++;
+                                if(trialHitDirection.equals("Left")){
+                                    System.out.println("y + 1 is " + x + 1);
+                                    if (!(y == 9)){
+                                        System.out.println("incremented left");
+                                        y++;
+                                    } else {
+                                        tryOtherWay = true;
+                                        break;
+                                    }
+                                } else {
+                                    System.out.println("y + 1 is " + x + 1);
+                                    if (!((y + 1) > 9)){
+                                        System.out.println("incremented left");
+                                        y++;
+                                    } else {
+                                        tryOtherWay = true;
+                                        break;
+                                    }
                                 }
                             }
                         } else {
                             break;
                         }
                     }
-
-                    
                     break;
                 }
             }
         }
         
-
-        if(hitOrMiss[x][y].equals("Hit") || hitOrMiss[x][y].equals("Miss")){
-            return 400;
-        }
-
         if(shipPlacements[x][y]){ // indicates if the xCord and yCord is a hit
-            if (hitCounter > 0){
+            if (hitCounter == 0){
+                System.out.print("hitCounter equals 0 triggered");
+                lastHitX = x;
+                lastHitY = y;
+                hitCounter ++;
+            } else if (hitCounter == 1){
+                System.out.println(x + ", " + y);
                 if (trialHitDirection.equals("Up") || trialHitDirection.equals("Down")){
                     shipDirection = "Vertical";
                 } else {
                     shipDirection = "Horizontal";
                 }
                 System.out.println("boom the ship is " + shipDirection);
+                hitCounter++;
             }
 
-            if (hitCounter == 0){
-                System.out.print("hitCounter equals 0 triggered");
-                lastHitX = x;
-                lastHitY = y;
-                hitCounter ++;
-            }
+            hitOrMiss[x][y] = "Hit";
+            
 
             int shipIdx = getShipFromXAndY(x, y);
             gameTiles[x][y].setIcon(null);
             gameTiles[x][y].setDisabledIcon(null);
             gameTiles[x][y].setBackground(Color.RED);
+
+            if (bothWaysTried){
+                resetRandomHitOrMissVariables();
+                return 0;
+            }
+            return 1;
         } else {
-            if (lastHitX != -1 && lastHitY != -1){
-                hitCounter++;
+            if (hitCounter == 1){
                 triedDirections.add(trialHitDirection);
             }
 
-            if (shipDirection.equals("Vertical") || shipDirection.equals("Horizontal")){
+            if (hitCounter == 2){
                 if (!tryOtherWay){
+                    System.out.println("we changed tryOtherWay");
                     tryOtherWay = true;
                 } else {
                     bothWaysTried = true;
-                    System.out.println("yuh we did it");
                 }
             }
 
-            gameTiles[x][y].setBackground(Color.GREEN);
-        }
+            // have to reset all these variables
+            // private boolean hit = false;
+            // private int hitCounter = 0;
+            // private int lastHitX = -1;
+            // private int lastHitY = -1;
+            // private String shipDirection = "None";
+            // private ArrayList<String> triedDirections = new ArrayList<String>();
+            // private boolean tryOtherWay = false;
+            // private boolean bothWaysTried = false;
+            if (bothWaysTried){
+                resetRandomHitOrMissVariables();
+            }
 
-        return 0;
+
+            hitOrMiss[x][y] = "Miss";
+            gameTiles[x][y].setBackground(Color.GREEN);
+
+            
+
+
+            return 0;
+        }
     }
 
     public boolean checkHitOrMiss(int x, int y){
@@ -540,4 +691,29 @@ public class PlayerBoard extends JPanel {
         }
     }
 
+    public Ship[] getHitShips(){
+        for (Ship ship : ships){
+            int numHits = 0;
+            for (int i = 0; i < ship.length; i++){
+                if (ship.getDirection() == Direction.VERTICAL){
+                    if(hitOrMiss[ship.getX() - i][ship.getY()].equals("Hit")){
+                        numHits ++;
+                    } 
+                } else {
+                    if(hitOrMiss[ship.getX()][ship.getY() + i].equals("Hit")){
+                        numHits ++;
+                    } 
+                }
+                
+            }
+
+            System.out.println("# of hits is " + numHits);
+
+            if (numHits == ship.length){
+                hitShips[ship.getIdx()] = ship;
+            }
+        }
+
+        return hitShips;
+    }
 }
