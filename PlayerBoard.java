@@ -707,8 +707,6 @@ public class PlayerBoard extends JPanel {
                 
             }
 
-            System.out.println("# of hits is " + numHits);
-
             if (numHits == ship.length){
                 hitShips[ship.getIdx()] = ship;
             }

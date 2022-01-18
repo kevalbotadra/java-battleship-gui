@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
@@ -402,6 +403,9 @@ public class Game implements ActionListener {
 
         if (phase == Phase.GAME){
             if(e.getActionCommand().equals("toggleConfirm")){
+                if(otherBoard.getHitOrMiss()[confirmTileX][confirmTileY].equals("None")){
+                        otherBoard.getGameTiles()[confirmTileX][confirmTileY].setBackground(Color.decode("#206d99"));
+                }
                 if(useConfirm){
                     useConfirm = false;
                 } else {
