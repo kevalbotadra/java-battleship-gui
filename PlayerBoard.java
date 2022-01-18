@@ -709,6 +709,25 @@ public class PlayerBoard extends JPanel {
 
             if (numHits == ship.length){
                 hitShips[ship.getIdx()] = ship;
+                for(int i = 0; i < ship.length; i++){
+                    //
+                    if(ship.getDirection() == Direction.VERTICAL){
+                        ImageIcon imageIcon = new ImageIcon("BattleshipImages/" + ship.name + "/" + (i + 1) + "_flip_hit.png"); // load the image to a
+                        Image image = imageIcon.getImage(); // transform it
+                        Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+                        imageIcon = new ImageIcon(newimg); // transform it back
+                        gameTiles[ship.getX() - i][ship.getY()].setIcon(imageIcon);
+                        gameTiles[ship.getX() - i][ship.getY()].setDisabledIcon(imageIcon);
+                    } else {
+                        ImageIcon imageIcon = new ImageIcon("BattleshipImages/" + ship.name + "/" + (i + 1) + "_hit.png"); // load the image to a
+                        Image image = imageIcon.getImage(); // transform it
+                        Image newimg = image.getScaledInstance(60, 60, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+                        imageIcon = new ImageIcon(newimg); // transform it back
+                        gameTiles[ship.getX()][ship.getY() + i].setIcon(imageIcon);
+                        gameTiles[ship.getX()][ship.getY() + i].setDisabledIcon(imageIcon);
+                    }
+                    
+                }
             }
         }
 
