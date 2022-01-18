@@ -7,6 +7,7 @@ import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 import java.awt.event.*;
 
+
 public class EraseButton extends JButton {
     public EraseButton(ActionListener listener){
         super("<html><center>Erase<br>Last Ship</center></html>");

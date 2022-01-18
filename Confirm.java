@@ -7,11 +7,13 @@ import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 import java.awt.event.*;
 
+//This function confirms the user's choice of the tile they click
 public class Confirm extends JPanel {
     private JButton confirmButton;
     private JLabel tileLocation;
     
-    public Confirm(ActionListener listener){
+    //adds confirm button
+    public Confirm(ActionListener listener){ 
         setLayout(new GridLayout(1, 2));
         setBounds(830, 5, 300, 50);
         
@@ -26,6 +28,7 @@ public class Confirm extends JPanel {
         this.add(tileLocation);
     }
 
+    //Sets the location of the click
     public void setTileLocation(String newStatus){
         tileLocation.setText(newStatus);
     }
