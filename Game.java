@@ -21,6 +21,7 @@ import java.awt.event.*;
 
 //This holds the game's main functions
 public class Game implements ActionListener {
+    //initialzing variables and objects
     private JFrame frame;
 
     private PlayerBoard playerBoard;
@@ -97,6 +98,7 @@ public class Game implements ActionListener {
 
     private boolean useConfirm = true;
 
+    //Sets the game up 
     public Game(){
         frame = new JFrame();
 
