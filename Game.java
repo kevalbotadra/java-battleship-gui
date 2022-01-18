@@ -19,6 +19,7 @@ import org.w3c.dom.events.MouseEvent;
 import java.awt.*;
 import java.awt.event.*;
 
+//This holds the game's main functions
 public class Game implements ActionListener {
     private JFrame frame;
 
