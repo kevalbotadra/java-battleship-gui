@@ -153,6 +153,7 @@ public class PlayerBoard extends JPanel {
             for (int k = 0; k < 10; k++) {
                 shipPlacements[i][k] = false;
                 gameTiles[i][k].setIcon(null);
+                gameTiles[i][k].setDisabledIcon(null);
                 gameTiles[i][k].revalidate();
                 gameTiles[i][k].setBackground(Color.decode("#206d99"));
             }

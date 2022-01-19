@@ -230,13 +230,14 @@ public class Game implements ActionListener {
         playerHitShipInfos[3] = playerCruiserInfo;
         playerHitShipInfos[4] = playerDestroyerInfo;
 
-        toggleConfirm = new JButton("Toggle Confirm");
-        toggleConfirm.setBounds(2, 5, 125, 15);
+        toggleConfirm = new JButton("Toggle Confirm : On");
+        toggleConfirm.setBounds(2, 5, 200, 15);
         Border border = BorderFactory.createEmptyBorder();
         toggleConfirm.setBorder(border);
         toggleConfirm.setFocusPainted(false);
         toggleConfirm.setActionCommand("toggleConfirm");
         toggleConfirm.addActionListener(this);
+        toggleConfirm.setVisible(false);
         frame.add(toggleConfirm);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -251,6 +252,7 @@ public class Game implements ActionListener {
     }
 
     public void gameVisibility(boolean choice){
+        toggleConfirm.setVisible(choice);
         turnLabel.setVisible(choice);
         confirmPanel.setVisible(choice);
         gamePhaseLabel.setVisible(choice);
@@ -438,8 +440,10 @@ public class Game implements ActionListener {
                         otherBoard.getGameTiles()[confirmTileX][confirmTileY].setBackground(Color.decode("#206d99"));
                 }
                 if(useConfirm){
+                    toggleConfirm.setText("Toggle Confirm: Off");
                     useConfirm = false;
                 } else {
+                    toggleConfirm.setText("Toggle Confirm: On");
                     useConfirm = true;
                 }
             }
