@@ -1,5 +1,8 @@
 package battleship;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.MouseInputListener;
@@ -9,6 +12,7 @@ import org.w3c.dom.events.MouseEvent;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -26,6 +30,7 @@ public class PlayerBoard extends JPanel {
 
     private String[][] hitOrMiss;
 
+    private int lastHits = 0;
 
     private Ship carrier;
     private Ship battleship;
@@ -691,6 +696,26 @@ public class PlayerBoard extends JPanel {
         }
     }
 
+    public void playSound(String fileName){
+        try {
+            // create an input stream for audio with the file define above
+            AudioInputStream audioInputStream = AudioSystem
+                    .getAudioInputStream(new File("BattleshipSounds/" + fileName + ".wav")); // change "byebye" to "lilnasx" to play industry baby
+
+            // create clip reference
+            Clip clip = AudioSystem.getClip();
+
+            // open audioInputStream to the clip
+            clip.open(audioInputStream);
+
+            // start the audio clip 
+            clip.start();
+
+        } catch (Exception e) {
+            System.out.println("RIP NO MUSICA :(");
+        }
+    }
+
     public Ship[] getHitShips(){
         for (Ship ship : ships){
             int numHits = 0;
@@ -734,3 +759,5 @@ public class PlayerBoard extends JPanel {
         return hitShips;
     }
 }
+
+

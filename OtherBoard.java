@@ -1,5 +1,8 @@
 package battleship;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.MouseInputListener;
@@ -7,6 +10,7 @@ import javax.swing.plaf.DimensionUIResource;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -18,6 +22,8 @@ public class OtherBoard extends JPanel {
     private boolean[][] shipPlacements;
 
     private String[][] hitOrMiss;
+
+    private int lastHits = 0;
     
     private Ship carrier;
     private Ship battleship;
@@ -34,6 +40,7 @@ public class OtherBoard extends JPanel {
         this.setBounds(25, 20, 325, 325);
 
         hitOrMiss = new String[10][10];
+
 
         // define an array of GameTiles equal to 100 (the amount of game tiles that
         // should exist)
@@ -231,10 +238,12 @@ public class OtherBoard extends JPanel {
             hitOrMiss[xCord][yCord] = "Hit";
             int shipIdx = getShipFromXAndY(xCord, yCord);
             this.setColorTile(xCord, yCord, ships[shipIdx].getColor());
+            playSound("Boom");
             return 1;
         } else {
             hitOrMiss[xCord][yCord] = "Miss";
             this.setColorTile(xCord, yCord, Color.GREEN);
+            playSound("Pop");
             return 0;
         }
     }
@@ -276,6 +285,7 @@ public class OtherBoard extends JPanel {
     }
 
     public Ship[] getHitShips(){
+        int shipHits = 0;
         for (Ship ship : ships){
             int numHits = 0;
             for (int i = 0; i < ship.length; i++){
@@ -290,8 +300,12 @@ public class OtherBoard extends JPanel {
                 }
                 
             }
-            System.out.println("numhits is " + numHits);
+
+            System.out.println(numHits + ", " + lastHits);
+
+
             if (numHits == ship.length){
+                shipHits ++;
                 hitShips[ship.getIdx()] = ship;
                 for(int i = 0; i < ship.length; i++){
                     if(ship.getDirection() == Direction.VERTICAL){
@@ -309,11 +323,41 @@ public class OtherBoard extends JPanel {
                         gameTiles[ship.getX()][ship.getY() + i].setIcon(imageIcon);
                         gameTiles[ship.getX()][ship.getY() + i].setDisabledIcon(imageIcon);
                     }
-                    
                 }
+
+                System.out.println(shipHits + "- " + lastHits);
+                
             }
         }
 
+        if(shipHits > lastHits){
+            playSound("Blow Up");
+        }
+
+        System.out.println(shipHits);
+
+        lastHits = shipHits;
+
         return hitShips;
+    }
+
+    public void playSound(String fileName){
+        try {
+            // create an input stream for audio with the file define above
+            AudioInputStream audioInputStream = AudioSystem
+                    .getAudioInputStream(new File("BattleshipSounds/" + fileName + ".wav")); // change "byebye" to "lilnasx" to play industry baby
+
+            // create clip reference
+            Clip clip = AudioSystem.getClip();
+
+            // open audioInputStream to the clip
+            clip.open(audioInputStream);
+
+            // start the audio clip 
+            clip.start();
+
+        } catch (Exception e) {
+            System.out.println("RIP NO MUSICA :(");
+        }
     }
 }
