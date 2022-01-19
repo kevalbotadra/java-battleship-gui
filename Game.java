@@ -1,6 +1,9 @@
 package battleship;
 
 import javax.print.attribute.standard.MediaSize.Other;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,6 +21,7 @@ import org.w3c.dom.events.MouseEvent;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
 //This holds the game's main functions
 public class Game implements ActionListener {
@@ -277,6 +281,7 @@ public class Game implements ActionListener {
             }   
         }
         if (counter == 5){
+            playSound("Win");
             JOptionPane.showMessageDialog(frame, "you won. i accept defeat. i am the lesser being");
             System.exit(200);
         }
@@ -291,10 +296,33 @@ public class Game implements ActionListener {
             }   
         }
         if(counter == 5){
-            JOptionPane.showMessageDialog(frame, "YOU LOST LMAO UR DOGWATER UNINSTALL");
+            playSound("Lost");
+            JOptionPane.showMessageDialog(frame, "YOU SUCK UR DOGWATER UNINSTALL DELETE THE GAME");
             System.exit(200);
         }
-    }  
+    }
+
+    public void playSound(String fileName){
+        try {
+            // create an input stream for audio with the file define above
+            AudioInputStream audioInputStream = AudioSystem
+                    .getAudioInputStream(new File("BattleshipSounds/" + fileName + ".wav")); // change "byebye" to "lilnasx" to play industry baby
+
+            // create clip reference
+            Clip clip = AudioSystem.getClip();
+
+            // open audioInputStream to the clip
+            clip.open(audioInputStream);
+
+            // start the audio clip 
+            clip.start();
+
+        } catch (Exception e) {
+            System.out.println("RIP NO MUSICA :(");
+        }
+    }
+
+    
 
     public void actionPerformed(ActionEvent e){
         if (e.getActionCommand() == "restart/finish"){
