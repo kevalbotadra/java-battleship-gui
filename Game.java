@@ -78,6 +78,7 @@ public class Game implements ActionListener {
     private JLabel gamePhaseLabel;
     private JLabel turnLabel;
 
+    //these hold the images of each ship for the computer
     private JLabel computerHitShipLabel;
     private ShipInfo computerCarrierInfo;
     private ShipInfo computerBattleshipInfo;
@@ -86,6 +87,7 @@ public class Game implements ActionListener {
     private ShipInfo computerDestroyerInfo;
     private ShipInfo[] computerHitShipInfos;
 
+    //these hold the images of each ship for the player
     private JLabel playerHitShipLabel;
     private ShipInfo playerCarrierInfo;
     private ShipInfo playerBattleshipInfo;
@@ -94,7 +96,7 @@ public class Game implements ActionListener {
     private ShipInfo playerDestroyerInfo;
     private ShipInfo[] playerHitShipInfos;
 
-
+    //counts how many ships have been shit for the player and computer
     private int totalComputerHitShips = 0;
     private int totalPlayerHitShips = 0;
 
@@ -109,9 +111,11 @@ public class Game implements ActionListener {
         // set the phase to set-up
         phase = Phase.SETUP;
 
+        //Sets of bound of Battleship board
         frame.setLayout(null);
         frame.setSize(1050, 900);
 
+        //Makes ship objects for each ship
         carrier = new Ship("Carrier", 5, 0, Color.GREEN);
         battleship = new Ship("Battleship", 4, 1, Color.BLACK);
         submarine = new Ship("Submarine", 3, 2, Color.PINK);
@@ -126,10 +130,9 @@ public class Game implements ActionListener {
         ships[3] = cruiser;
         ships[4] = destroyer;
 
-
+        //All of these are objects that go on the board like both of the boards and the buttons for all the different actions 
         playerBoard = new PlayerBoard(this, carrier, battleship, submarine, cruiser, destroyer);
         frame.add(playerBoard);
-
 
         otherBoard = new OtherBoard(this);
         // otherBoard.disableButtons();
