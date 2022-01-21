@@ -152,28 +152,33 @@ public class Game implements ActionListener {
         confirmPanel.setVisible(false);
         frame.add(confirmPanel);
 
+        //States what direction the ship is 
         directionLabel = new JLabel("Ship Direction: Horizontal");
         directionLabel.setFont(directionLabel.getFont().deriveFont(directionLabel.getFont().getStyle() | Font.BOLD));
         directionLabel.setBounds(845, 50, 200, 50);
         frame.add(directionLabel);
         
+        //Directions for placing ships
         shipPlacementDirectionLabel = new JLabel();
         shipPlacementDirectionLabel.setText("<html>Tap anywhere on the grid to place your ships on the board. Note that the position you tap will be the end of the ship. If you are horizontal, the ship will start at the clicked position and be placed rightwards. If you are vertical, the ship will placed upwards.</html>");
         shipPlacementDirectionLabel.setBounds(430, 0, 400, 100);
         frame.add(shipPlacementDirectionLabel);
 
+        //Direction for guessing the computer's ships
         gamePhaseLabel = new JLabel();
         gamePhaseLabel.setText("<html>When it's your turn, click anywhere on the small board, and cofirm it to make a guess. If you get a hit, the board will turn the color of the boat (which will be anything but green), and if you get a miss the board will turn green. In order to win, destroy all the computer's ships, before it destroys yours.</html>");
         gamePhaseLabel.setBounds(430, 0, 400, 100);
         gamePhaseLabel.setVisible(false);
         frame.add(gamePhaseLabel);
 
+        //Displays whose turn it is
         turnLabel = new JLabel("Turn: Yours");
         turnLabel.setFont(directionLabel.getFont().deriveFont(directionLabel.getFont().getStyle() | Font.BOLD));
         turnLabel.setBounds(860, 50, 200, 50);
         turnLabel.setVisible(false);
         frame.add(turnLabel);
 
+        //This code displays the computer's ships and which ones have been hit
         int hitShipLabelYBounds = 340;
         int computerHitShipsXBounds = 40;
         computerHitShipLabel = new JLabel("Computer's Ships");
@@ -204,6 +209,7 @@ public class Game implements ActionListener {
         computerHitShipInfos[3] = computerCruiserInfo;
         computerHitShipInfos[4] = computerDestroyerInfo;
 
+        //This code displays the player's ships and which ships have been hit
         int playerHitShipXBounds = 245;
         playerHitShipLabel = new JLabel("Player's Ships");
         playerHitShipLabel.setFont(directionLabel.getFont().deriveFont(directionLabel.getFont().getStyle() | Font.BOLD));
@@ -233,6 +239,7 @@ public class Game implements ActionListener {
         playerHitShipInfos[3] = playerCruiserInfo;
         playerHitShipInfos[4] = playerDestroyerInfo;
 
+        //Button to toggle confirm so you don't have to click confirm every time you make a guess
         toggleConfirm = new JButton("Toggle Confirm : On");
         toggleConfirm.setBounds(2, 5, 200, 15);
         Border border = BorderFactory.createEmptyBorder();
@@ -247,6 +254,7 @@ public class Game implements ActionListener {
         frame.setVisible(true);
     }
 
+    //Based on what you do in the setup phase, it will choose whether or not to display that button
     public void setupVisbility(boolean choice){
         rotateButton.setVisible(choice);
         eraseButton.setVisible(choice);
@@ -254,6 +262,7 @@ public class Game implements ActionListener {
         directionLabel.setVisible(choice);
     }
 
+    //Based on what you do in the game phase, it will choose whether or not to display that button
     public void gameVisibility(boolean choice){
         toggleConfirm.setVisible(choice);
         turnLabel.setVisible(choice);
@@ -261,6 +270,7 @@ public class Game implements ActionListener {
         gamePhaseLabel.setVisible(choice);
     }
 
+    //Based on whose turn it is, it will disable the buttons
     public void setTurn(int turn){
         if (turn == 0){
             turnLabel.setText("Turn: Yours");
@@ -273,10 +283,7 @@ public class Game implements ActionListener {
         }
     }
 
-    public void redoLastShip(){
-        Ship ship = ships[shipPlace - 1];
-    }
-
+    //Checks how many ships are hit for the computer and if all the ships have been hit it will play a sound effect and display an image
     public void setComputerHitShips(Ship[] computerHitShips){
         int counter = 0;
         for (Ship ship : computerHitShips){
@@ -292,6 +299,7 @@ public class Game implements ActionListener {
         }
     } 
     
+    //Checks how many ships are hit for the playerand if all the ships have been hit it will play a sound effect and display an image
     public void setPlayerHitShips(Ship[] playerHitShips){
         int counter = 0;
         for (Ship ship : playerHitShips){
@@ -307,6 +315,7 @@ public class Game implements ActionListener {
         }
     }
 
+    //Function to play music when a certain action occurs
     public void playSound(String fileName){
         try {
             // create an input stream for audio with the file define above
@@ -327,9 +336,9 @@ public class Game implements ActionListener {
         }
     }
 
-    
-
+    //Performs actions based on what phase it is
     public void actionPerformed(ActionEvent e){
+        //Restarts game if it is in the game phase and would move to the next phase if it is the setup phase
         if (e.getActionCommand() == "restart/finish"){
             if (phase == Phase.SETUP){
                 if (shipPlace == 5){
@@ -357,6 +366,7 @@ public class Game implements ActionListener {
             
         }
 
+        //Checks if the ship you are trying to place can't fit there
         if(phase == Phase.SETUP){
             if (placeable){
                 if (e.getActionCommand() == "playerBoardTile"){
@@ -380,12 +390,14 @@ public class Game implements ActionListener {
                 }
             }
 
+            //This randomizes the ship placements 
             if (e.getActionCommand() == "randomize"){
                 shipPlace = 5;
                 playerBoard.randomizeBoard();
                 playerBoard.gatherShipPlacements();
             }
 
+            //This rotates the ship while checking if it is valid 
             if(e.getActionCommand() == "rotate"){
                 if(!(rotateCounter % 2 == 0)){
                     direction = Direction.VERTICAL;
@@ -412,6 +424,7 @@ public class Game implements ActionListener {
                 rotateCounter ++;
             }
 
+            //This erases the last ship when you press the button at first and if you press it again it will erase all the ships
             if(e.getActionCommand() == "erase"){
                 if(eraseCounter == 0){
                     if (shipPlace != 5){
@@ -437,7 +450,9 @@ public class Game implements ActionListener {
             }
         }
 
+        
         if (phase == Phase.GAME){
+            //Turns toggle confirm on and off 
             if(e.getActionCommand().equals("toggleConfirm")){
                 if(otherBoard.getHitOrMiss()[confirmTileX][confirmTileY].equals("None")){
                         otherBoard.getGameTiles()[confirmTileX][confirmTileY].setBackground(Color.decode("#206d99"));
@@ -451,6 +466,7 @@ public class Game implements ActionListener {
                 }
             }
 
+            //This is the confirm button used to confirm a tile when the player is guessing where the computer's ships are 
             if(useConfirm){
                 if(e.getActionCommand() == "confirm"){
                     if(!otherBoard.getHitOrMiss()[confirmTileX][confirmTileY].equals("None")){
@@ -477,7 +493,7 @@ public class Game implements ActionListener {
                         confirmPanel.setTileLocation(" ");
                     }
                 }
-    
+                //Checks if the player already guessed that tile and informs user if they try to guess that tile again with the coordinate of that tile
                 if (e.getActionCommand() == "otherBoardTile"){
                     if(otherBoard.getHitOrMiss()[confirmTileX][confirmTileY].equals("None")){
                         otherBoard.getGameTiles()[confirmTileX][confirmTileY].setBackground(Color.decode("#206d99"));
@@ -494,6 +510,7 @@ public class Game implements ActionListener {
                     }
                 }
             } else {
+                //This checks if the player is trying to confirm a tile without clicking a tile
                 if (e.getActionCommand() == "otherBoardTile"){
                     if(otherBoard.getHitOrMiss()[confirmTileX][confirmTileY].equals("None")){
                         otherBoard.getGameTiles()[confirmTileX][confirmTileY].setBackground(Color.decode("#206d99"));

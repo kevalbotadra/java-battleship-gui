@@ -7,6 +7,7 @@ import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 import java.awt.event.*;
 
+//Makes button 
 class GameTile extends JButton {
     public int row;
     public int column;

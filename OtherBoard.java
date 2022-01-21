@@ -14,17 +14,21 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
+//Makes board for the computer to guess on
 public class OtherBoard extends JPanel {
     private static int num = 11;
 
     private GameTile[][] gameTiles;
 
+    //2-D boolean to place the ships
     private boolean[][] shipPlacements;
 
+    //2-D String to check a hit or a miss
     private String[][] hitOrMiss;
 
     private int lastHits = 0;
     
+    //initializing all the ships
     private Ship carrier;
     private Ship battleship;
     private Ship submarine;
@@ -37,6 +41,7 @@ public class OtherBoard extends JPanel {
     public OtherBoard(ActionListener listener) {
         super(new GridLayout(num, num)); // created a grid layout 11 x 11
 
+        //Sets bounds of the board
         this.setBounds(25, 20, 325, 325);
 
         hitOrMiss = new String[10][10];
@@ -126,6 +131,7 @@ public class OtherBoard extends JPanel {
         setShips();
     }
 
+    //Returns if it is a hit or a miss
     public String[][] getHitOrMiss(){
         return hitOrMiss;
     }
@@ -157,6 +163,7 @@ public class OtherBoard extends JPanel {
 
                 // overlap boolean indicates if overlap exists
                 boolean overlap = false;
+                //If there is an overlap it adjusts the position of the ship to fit on the board
                 if (direction == Direction.HORIZONTAL) {
                     if (y > (10 - ship.length)) {
                         y = y - ship.length;
@@ -213,6 +220,7 @@ public class OtherBoard extends JPanel {
         }
     }
 
+    //Clears board
     public void clearBoard(){
         // loops over every row
         for (int i = 0; i < 10; i++) {
@@ -227,15 +235,18 @@ public class OtherBoard extends JPanel {
         }
     }
 
+    //Resets board
     public void resetBoard(){
         this.clearBoard();
         this.setShips();
     }
     
+    //Changs the color of the tile
     public void setColorTile(int xCord, int yCord, Color color){
         gameTiles[xCord][yCord].setBackground(color);
     }
 
+    //Checks if it is a hit or a miss and plays a sound if there is a hit
     public int checkHitOrMiss(int xCord, int yCord) {
         if(shipPlacements[xCord][yCord]){ // indicates if the xCord and yCord is a hit
             hitOrMiss[xCord][yCord] = "Hit";
@@ -250,6 +261,7 @@ public class OtherBoard extends JPanel {
             return 0;
         }
     }
+
 
     public int getShipFromXAndY(int xCord, int yCord){
         for (Ship ship : ships){
@@ -271,6 +283,7 @@ public class OtherBoard extends JPanel {
         return 10;
     }
 
+    //Disables the buttons
     public void disableButtons(){
         for (int i = 0; i < 10; i++){
             for (int k = 0; k < 10; k++){
@@ -279,6 +292,7 @@ public class OtherBoard extends JPanel {
         }
     }
 
+    //Enables the buttons
     public void enableButtons(){
         for (int i = 0; i < 10; i++){
             for (int k = 0; k < 10; k++){
@@ -306,7 +320,7 @@ public class OtherBoard extends JPanel {
 
             System.out.println(numHits + ", " + lastHits);
 
-
+            //Condition for when ship sinks so and image of the hit ship replaces the hit squares that represent the ship
             if (numHits == ship.length){
                 shipHits ++;
                 hitShips[ship.getIdx()] = ship;
@@ -344,6 +358,7 @@ public class OtherBoard extends JPanel {
         return hitShips;
     }
 
+    //Plays a sound
     public void playSound(String fileName){
         try {
             // create an input stream for audio with the file define above
