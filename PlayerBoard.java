@@ -16,13 +16,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
+//This is for the player board where the computer guesses where your ships are
 public class PlayerBoard extends JPanel {
     private static int num = 11;
 
     // variables to keep track of turns
     private boolean turn = false;
-
-    
 
     private static GameTile[][] gameTiles;
 
@@ -32,6 +31,7 @@ public class PlayerBoard extends JPanel {
 
     private int lastHits = 0;
 
+    //initializing all the ships
     private Ship carrier;
     private Ship battleship;
     private Ship submarine;
@@ -41,7 +41,6 @@ public class PlayerBoard extends JPanel {
     private Ship[] ships;
     private Ship[] hitShips = new Ship[5];
 
-    
     private boolean hit = false;
     private int hitCounter = 0;
     private int lastHitX = -1;
@@ -51,15 +50,16 @@ public class PlayerBoard extends JPanel {
     private boolean tryOtherWay = false;
     private boolean bothWaysTried = false;
 
+    //Function that makes player board
     public PlayerBoard(ActionListener listener, Ship carrier, Ship battleship, Ship submarine, Ship destroyer, Ship cruiser) {
         setLayout(new GridLayout(num, num));
+        //Sets bounds of board
         setBounds(375, 90, 650, 650);
 
         shipPlacements = new boolean[10][10];
         hitOrMiss = new String[10][10];
 
-        // define an array of GameTiles equal to 100 (the amount of game tiles that
-        // should exist)
+        // define an array of GameTiles equal to 100 (the amount of game tiles that should exist)
         ArrayList<GameTile> listGameTiles = new ArrayList<GameTile>();
 
         // iterate over the amount of tiles in this case 121
@@ -129,7 +129,8 @@ public class PlayerBoard extends JPanel {
         ships[4] = destroyer;
 
     }
-
+    
+    //Disables the buttons
     public void disableButtons() {
         for (int i = 0; i < 10; i++) {
             for (int k = 0; k < 10; k++) {
@@ -138,6 +139,7 @@ public class PlayerBoard extends JPanel {
         }
     }
 
+    //Enables the buttons
     public void enableButtons() {
         for (int i = 0; i < 10; i++) {
             for (int k = 0; k < 10; k++) {
@@ -146,6 +148,7 @@ public class PlayerBoard extends JPanel {
         }
     }
 
+    //Resets the board
     public void resetBoard() {
         // loops over every row
         for (int i = 0; i < 10; i++) {
@@ -160,9 +163,11 @@ public class PlayerBoard extends JPanel {
         }
     }
 
+    //Function for player to place their ships on the player board
     public int placeShip(Ship ship, int xCord, int yCord, Direction direction) {
         ship.setXAndY(xCord, yCord);
         ship.setDirection(direction);
+        //Checks if ships are outside the bounds of the board 
         if (direction == Direction.HORIZONTAL) {
             if ((yCord + ship.length) > 11) {
                 return 0;
@@ -173,6 +178,7 @@ public class PlayerBoard extends JPanel {
             }
         }
 
+        
         int checkCounter = 0;
         for (int i = 0; i < ship.length; i++) {
             if (direction == Direction.HORIZONTAL) {
