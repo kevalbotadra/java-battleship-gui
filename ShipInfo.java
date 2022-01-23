@@ -7,7 +7,7 @@ import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 import java.awt.event.*;
 
-//All the inage info for the ships
+//All the image info for the ships
 public class ShipInfo extends JPanel {
     private JButton shipImage;
     private JLabel status;

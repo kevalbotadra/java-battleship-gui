@@ -180,6 +180,7 @@ public class PlayerBoard extends JPanel {
 
         
         int checkCounter = 0;
+        //This is to check of there is a ship in the desired spot you want to place your ship in
         for (int i = 0; i < ship.length; i++) {
             if (direction == Direction.HORIZONTAL) {
                 if(gameTiles[xCord][(yCord + checkCounter)].getIcon() != null){
@@ -198,6 +199,7 @@ public class PlayerBoard extends JPanel {
 
 
         int counter = 0;
+        //Adds ships to the tiles if there is no other ships in the way
         for (int i = 0; i < ship.length; i++) {
             if (direction == Direction.HORIZONTAL) {
                 ImageIcon imageIcon = new ImageIcon("BattleshipImages/" + ship.name + "/" + (i + 1) + ".png"); // load the image to a
@@ -226,6 +228,7 @@ public class PlayerBoard extends JPanel {
         return 2;
     }
 
+    //This funnction finds out if there is a ship on that tile
     public void gatherShipPlacements(){
         // loops over every row
         for (int i = 0; i < 10; i++) {
@@ -240,6 +243,7 @@ public class PlayerBoard extends JPanel {
         }
     }
 
+    //This function randomizes the ship placements for the randomize button
     public void randomizeBoard(){
         resetBoard();
         // instantate a random class
@@ -264,6 +268,8 @@ public class PlayerBoard extends JPanel {
 
                 // overlap boolean indicates if overlap exists
                 boolean overlap = false;
+                
+                //Checks to see if there is overlap for horizontal ships
                 if (direction == Direction.HORIZONTAL) {
                     if (y > (10 - ship.length)) {
                         y = y - ship.length;
@@ -278,6 +284,7 @@ public class PlayerBoard extends JPanel {
                     }
                 }
 
+                //Checks to see if there is overlap for horizontal ships
                 if (direction == Direction.VERTICAL) {
                     if (x < (10 - ship.length)) {
                         x = x + ship.length;
@@ -291,7 +298,9 @@ public class PlayerBoard extends JPanel {
                     }
                 }
 
+                //Condition for when there is no overlap
                 if (!overlap) {
+                    //Places ship horizontally 
                     if (direction == Direction.HORIZONTAL) {
                         ship.direction = direction;
                         if (y > (10 - ship.length)) {
@@ -308,6 +317,7 @@ public class PlayerBoard extends JPanel {
                         }
                     }
 
+                    //Places ship horizontally 
                     if (direction == Direction.VERTICAL) {
                         ship.direction = direction;
                         if (x < (10 - ship.length)) {
@@ -324,6 +334,7 @@ public class PlayerBoard extends JPanel {
                         }
                     }
 
+                    //Once the ships are randomly placed it sets a new x and y coordinate
                     ship.setXAndY(x, y);
                     break;
                 }
@@ -331,6 +342,7 @@ public class PlayerBoard extends JPanel {
         }
     }
 
+    //Sets all varibale back to default values
     public void resetRandomHitOrMissVariables(){
         hit = false;
         hitCounter = 0;
@@ -342,6 +354,7 @@ public class PlayerBoard extends JPanel {
         bothWaysTried = false;
     }
 
+    //This function checks to see if there are hits around a hit tile
     public int randomHitOrMiss() {  
         Random rand = new Random();
 
@@ -349,7 +362,7 @@ public class PlayerBoard extends JPanel {
         int x = -1;
         int y = -1;
 
-
+        //Checks if there was a hit last time
         if (lastHitX == -1 && lastHitY == -1){
             x = rand.nextInt(10);
             y = rand.nextInt(10);
@@ -365,7 +378,6 @@ public class PlayerBoard extends JPanel {
         }
 
         
-
         if(hitCounter == 1){
             System.out.println("choosing a random spot around the last hit value of " + x + ", " + y);
             String[] sides = {"Up", "Down", "Left", "Right"};
@@ -373,8 +385,10 @@ public class PlayerBoard extends JPanel {
             lastHitY = y;
             while (true){
                 int i = 0;
+                //Chooes a random side to check
                 trialHitDirection = sides[rand.nextInt(sides.length)];
                 int counter = 0;
+                //Updates counter for each side that was tried
                 for (String tried : triedDirections){
                     if(trialHitDirection == tried){
                         i = 1;
@@ -382,10 +396,12 @@ public class PlayerBoard extends JPanel {
                     }  
                 }
 
+                //Tries all sides until it tries all sides
                 if (counter > 0){
                     continue;
                 }
                 
+                //When it tries all sides it breaks the leep
                 if(counter == 4){
                     hitCounter = 1;
                     break;
@@ -393,6 +409,7 @@ public class PlayerBoard extends JPanel {
 
                 System.out.println("Trying side: " + trialHitDirection);
                 System.out.println(x + ", " + y);
+                //Checks if you can go up
                 if (trialHitDirection.equals("Up")){
                     if (!((x - 1) < 0)){
                         x--;
@@ -400,21 +417,21 @@ public class PlayerBoard extends JPanel {
                         triedDirections.add("Up");
                         i = 1;
                     }
-                } else if (trialHitDirection.equals("Down")){
+                } else if (trialHitDirection.equals("Down")){//Checks if you can go down
                     if (!((x + 1) > 9)){
                         x++;
                     } else {
                         triedDirections.add("Down");
                         i = 1;
                     }
-                } else if (trialHitDirection.equals("Right")){ 
+                } else if (trialHitDirection.equals("Right")){ //Checks if you can go right
                     if (!((y + 1) > 9)){
                         y++;
                     } else {
                         triedDirections.add("Right");
                         i = 1;
                     }
-                } else if (trialHitDirection.equals("Left")){
+                } else if (trialHitDirection.equals("Left")){//Checks if you can go left
                     if (!((y - 1) < 0)){
                         y--;
                     } else {
@@ -423,6 +440,7 @@ public class PlayerBoard extends JPanel {
                     }
                 }
 
+                //All the direction have been tried and i is still 0 so it breaks the loop
                 if (i == 0){
                     break;
                 }
@@ -431,13 +449,12 @@ public class PlayerBoard extends JPanel {
 
 
             }
-            
-            
         } 
         
         if (hitCounter == 2){
             System.out.println("detected that we have a " + shipDirection + " ship. Now gonna increment stuff.");
             System.out.println(x + ", " + y);
+            //When ship is vertical
             if (shipDirection.equals("Vertical")){
                 while(true){
                     System.out.println("tryOtherWay is " + tryOtherWay);
@@ -450,6 +467,7 @@ public class PlayerBoard extends JPanel {
                             break;
                         }
                     } else {
+                        //Checks if you can increment up or will try the other way
                         if (!((x - 1) < 0)){
                             System.out.println("incremented up");
                             x--;
@@ -465,12 +483,14 @@ public class PlayerBoard extends JPanel {
                         System.out.println(hitOrMiss[x][y]);
                         if((hitOrMiss[x][y].equals("Hit"))){ // checks it the space has been checked already
                             if(tryOtherWay){
+                                //Will try going down
                                 if(trialHitDirection.equals("Down")){
                                     System.out.println("x + 1 is " + x + 1);
+                                    //Keeps on going down because there is something there
                                     if (!(x == 9)){
                                         System.out.println("detected some shtuff so incremented the x down again");
                                         x++;
-                                    } else {
+                                    } else {//Nothing there so breaks the llops
                                         bothWaysTried = true;
                                         System.out.println("broke da for loop");
                                         break;
@@ -486,6 +506,7 @@ public class PlayerBoard extends JPanel {
                                     }
                                 }
                             } else {
+                                //Will try going up
                                 if(trialHitDirection.equals("Up")){
                                     System.out.println("x - 1 is " + x + 1);
                                     if (!(x == 0)){
@@ -517,6 +538,7 @@ public class PlayerBoard extends JPanel {
                 }
             } else {
                 while(true){
+                    //Checks the right and left of the next tile
                     if(tryOtherWay){
                         if (!((y - 1) < 0)){
                             System.out.println("detected some shtuff so incremented the y right again");
@@ -541,6 +563,7 @@ public class PlayerBoard extends JPanel {
                         System.out.println(hitOrMiss[x][y]);
                         if((hitOrMiss[x][y].equals("Hit") || hitOrMiss[x][y].equals("Miss"))){ // checks it the space has been checked already
                             if(tryOtherWay){
+                                //Checks the right of the tile
                                 if(trialHitDirection.equals("Right")){
                                     System.out.println("y - 1 is " + x + 1);
                                     if (!(y == 0)){
@@ -561,6 +584,7 @@ public class PlayerBoard extends JPanel {
                                     }
                                 }
                             } else {
+                                //Checks the left of the tile
                                 if(trialHitDirection.equals("Left")){
                                     System.out.println("y + 1 is " + x + 1);
                                     if (!(y == 9)){
@@ -658,6 +682,7 @@ public class PlayerBoard extends JPanel {
         }
     }
 
+    //Checks if there is a hit or miss
     public boolean checkHitOrMiss(int x, int y){
         if (hitOrMiss[x][y].equals("Hit") || hitOrMiss[x][y].equals("Miss")){
             return true;         
@@ -665,6 +690,7 @@ public class PlayerBoard extends JPanel {
         return false;
     }
    
+    //This gets ship's index from x and y coordinates
     public int getShipFromXAndY(int xCord, int yCord){
         for (Ship ship : ships){
             if(ship.direction == Direction.HORIZONTAL){
@@ -685,6 +711,7 @@ public class PlayerBoard extends JPanel {
         return 10;
     }
 
+    //This is the button to erase the last ship
     public void eraseShip(Ship ship, int xCord, int yCord) {
         System.out.println(ship.name + ship.direction);
         int counter = 0;
@@ -703,6 +730,7 @@ public class PlayerBoard extends JPanel {
         }
     }
 
+    //Function to play audio clip
     public void playSound(String fileName){
         try {
             // create an input stream for audio with the file define above
@@ -723,6 +751,7 @@ public class PlayerBoard extends JPanel {
         }
     }
 
+    //This takes the hit ships and replaces it with the hit ship images
     public Ship[] getHitShips(){
         for (Ship ship : ships){
             int numHits = 0;
