@@ -7,15 +7,16 @@ import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 import java.awt.event.*;
 
+//All the inage info for the ships
 public class ShipInfo extends JPanel {
     private JButton shipImage;
     private JLabel status;
     
+    //Function to get ship on the board
     public ShipInfo(ActionListener listener, int x, int y, String imageIconPath){
         setLayout(new GridLayout(1, 2));
         setBounds(x, y, 200, 50);
         
-
         shipImage = new JButton();
         shipImage.setFocusPainted(false);
         shipImage.addActionListener(listener);

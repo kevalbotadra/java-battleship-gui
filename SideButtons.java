@@ -16,6 +16,7 @@ public class SideButtons extends JPanel {
         
         buttons = new JButton[2];
 
+        //Makes button to either restart the game or finish placing your ships
         JButton restartFinish = new JButton("Finish");
         restartFinish.setFocusPainted(false);
         restartFinish.setActionCommand("restart/finish");
@@ -23,6 +24,7 @@ public class SideButtons extends JPanel {
         buttons[0] = restartFinish;
         this.add(restartFinish);
 
+        //Makes button to randomize ship placements
         JButton randomize = new JButton("Randomize"); 
         randomize.setFocusPainted(false);
         randomize.setActionCommand("randomize");
@@ -31,10 +33,12 @@ public class SideButtons extends JPanel {
         this.add(randomize);
     }
 
+    //Function to change the finish button to the restart button
     public void changeFinishToRestart(){
         buttons[0].setText("Restart");
     }
 
+    //Function to change the restart button to the finish button
     public void changeRestartToFinish(){
         buttons[0].setText("Finish");
     }
