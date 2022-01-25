@@ -7,11 +7,12 @@ import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 import java.awt.event.*;
 
-//Makes button 
+//Makes buttons
 class GameTile extends JButton {
     public int row;
     public int column;
 
+    //Tile for the button and takes in a command for what the button should do and the border of the button
     public GameTile(String actionCommand, boolean useBorder) {
         if (useBorder){
             setBorder(BorderFactory.createLineBorder(Color.black));

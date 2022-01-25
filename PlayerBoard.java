@@ -658,25 +658,13 @@ public class PlayerBoard extends JPanel {
                 }
             }
 
-            // have to reset all these variables
-            // private boolean hit = false;
-            // private int hitCounter = 0;
-            // private int lastHitX = -1;
-            // private int lastHitY = -1;
-            // private String shipDirection = "None";
-            // private ArrayList<String> triedDirections = new ArrayList<String>();
-            // private boolean tryOtherWay = false;
-            // private boolean bothWaysTried = false;
+
             if (bothWaysTried){
                 resetRandomHitOrMissVariables();
             }
 
-
             hitOrMiss[x][y] = "Miss";
             gameTiles[x][y].setBackground(Color.GREEN);
-
-            
-
 
             return 0;
         }

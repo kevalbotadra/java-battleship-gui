@@ -10,6 +10,7 @@ import java.awt.event.*;
 public class SideButtons extends JPanel {
     private JButton[] buttons;
 
+    //Function to make different buttons
     public SideButtons(ActionListener listener){
         setLayout(new GridLayout(1, 2));
         setBounds(50, 650, 300, 100);

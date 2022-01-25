@@ -33,6 +33,7 @@ public class ShipInfo extends JPanel {
         this.add(status);
     }
 
+    //Changes the status of if the ship is hit or not(X or Check mark)
     public void setStatus(String newStatus){
         status.setText(newStatus);
     }
